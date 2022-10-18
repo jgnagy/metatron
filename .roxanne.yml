@@ -1,0 +1,14 @@
+version: 1.0
+stages:
+  build:
+    image: docker:latest
+    scripts:
+    - ./scripts/build.sh
+  test:
+    image: ruby:3.1
+    scripts:
+    - ./scripts/test.sh
+  release:
+    image: ruby:3.1
+    only:
+    - main
