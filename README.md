@@ -279,4 +279,29 @@ $ curl \
   http://localhost:9292/sync
 ```
 
-**Still in progress**
+Once we've confirmed this works, we'll need to publish our image somewhere and run it. Make sure you update the Service details in `blog-controller.yaml` to reflect its actual location.
+
+### Using the New Composite Controller
+
+After your Metatron controller is up and running in your Kubernetes cluster, you'll need to actually `kubectl apply` your `blog-controller.yaml` file we created way above. Once that is deployed, you can create new `Blog` resources that look something like this (let's call it `test-blog.yaml`):
+
+```yaml
+apiVersion: example.com/v1
+kind: Blog
+metadata:
+  name: test
+spec:
+  image: my.registry/blog:tag
+  replicas: 2
+```
+
+Note that `my.registry/blog:tag` should point to some image that is ready to run a blog. This is just an example and, much like the other resources we've created in this guide, it will almost certainly not work as-is.
+
+Let's make a new namespace for this blog and launch it:
+
+```sh
+$ kubectl create namespace blog-test
+$ kubectl -n blog-test apply -f test-blog.yaml
+```
+
+You should be able to inspect the pods, services, etc. in the `blog-test` namespace and see your resources running!
