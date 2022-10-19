@@ -11,7 +11,7 @@ Your Ruby code doesn't have to have any _real_ knowledge of the Kubernetes envir
 **DRAFT**
 ### Getting Started
 
-To use Metatron, first decide what type of Metacontroller you'd like to create, mostly based on the type(s) of resource(s) you'll manage. Most of the time, this is a Custom Resource that in term has child resources, which means you'll want a [Composite Controller](https://metacontroller.github.io/metacontroller/api/compositecontroller.html).
+To use Metatron, first decide what type of Metacontroller you'd like to create, mostly based on the type(s) of resource(s) you'll manage. Most of the time, what you want is a Custom Resource that has child resources, which means you'll want a [Composite Controller](https://metacontroller.github.io/metacontroller/api/compositecontroller.html).
 
 Reading the [Metacontroller user's guide](https://metacontroller.github.io/metacontroller/guide.html) will be pretty helpful but isn't strictly required.
 
