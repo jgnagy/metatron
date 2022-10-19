@@ -11,7 +11,7 @@ module Metatron
                     :pod_management_policy, :enable_service_links,
                     :termination_grace_period_seconds, :additional_pod_labels
 
-      def initialize(name, replicas: 2)
+      def initialize(name, replicas: 1)
         super(name)
         @replicas = replicas
         @api_version = "apps/v1"
