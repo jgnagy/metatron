@@ -8,7 +8,7 @@ Your Ruby code doesn't have to have any _real_ knowledge of the Kubernetes envir
 
 ## Usage
 
-**DRAFT**
+For a complete walk-through, check out my [blog mini-series](https://therubyist.org/2022/10/25/kubernetes-controllers-via-metatron-part-1/) about Metatron!
 ### Getting Started
 
 To use Metatron, first decide what type of Metacontroller you'd like to create, mostly based on the type(s) of resource(s) you'll manage. Most of the time, what you want is a Custom Resource that has child resources, which means you'll want a [Composite Controller](https://metacontroller.github.io/metacontroller/api/compositecontroller.html).
@@ -29,9 +29,9 @@ Here's how that CRD (let's call it `blog-crd.yaml`) might look:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: blog.example.com
+  name: blogs.therubyist.org
 spec:
-  group: example.com
+  group: therubyist.org
   names:
     kind: Blog
     plural: blogs
@@ -42,7 +42,7 @@ spec:
     served: true
     storage: true
     subresources:
-     status: {}
+      status: {}
     schema:
       openAPIV3Schema:
         type: object
@@ -55,6 +55,13 @@ spec:
               replicas:
                 type: integer
                 minimum: 1
+              storage:
+                type: object
+                properties:
+                  app:
+                    type: string
+                  db:
+                    type: string
 ```
 
 This means we'll be able to query our Kubernetes cluster for `blogs`. You might eventually want to expand the field list, or simplify it and defer to your controller for validating it. You'll also probably want to make `metadata.name` and `spec.group` use a real domain to avoid potential conflicts. This should be safe to `kubectl apply` as the CRD doesn't do much on its own.
@@ -69,7 +76,7 @@ metadata:
 spec:
   generateSelector: true
   parentResource:
-    apiVersion: example.com/v1
+    apiVersion: therubyist.org/v1
     resource: blogs
   childResources:
   - apiVersion: apps/v1
@@ -150,22 +157,22 @@ Finally, before we start hacking on some actual Metatron-related code, we'll nee
 
 ```dockerfile
 FROM ruby:3.1
-
+ 
 RUN mkdir -p /app
-
+ 
 COPY config.ru /app/
 COPY Gemfile /app/
 COPY Gemfile.lock /app/
 COPY lib/ /app/lib/
-
+ 
 RUN apt update && apt upgrade -y
 RUN useradd appuser -d /app -M -c "App User"
 RUN chown appuser /app/Gemfile.lock
-
+ 
 USER appuser
 WORKDIR /app
 RUN bundle install
-
+ 
 ENTRYPOINT ["bundle", "exec"]
 CMD ["puma"]
 ```
@@ -176,30 +183,21 @@ CMD ["puma"]
 # frozen_string_literal: true
 
 module BlogController
-  # The Blog sync controller endpoint
   class Sync < Metatron::SyncController
     # This method needs to return a Hash which will be converted to JSON
     # It should have the keys "status" (a Hash) and "children" (an Array)
     def sync
       # request_body is a convenient way to access the data provided by MetaController
       parent = request_body["parent"]
+      existing_children = request_body["children"]
       desired_children = []
 
       # first, let's create the DB and its service
-      db_stateful_set = construct_db_stateful_set(parent["metadata"])
-      desired_children << db_stateful_set
-      db_service = construct_service(parent["metadata"], { "app.kubernetes.io/component": "db" })
-      desired_children << db_service
+      desired_children += construct_db_resources(parent, existing_children)
 
       # now let's make the app and its parts
-      app_auth_secret = construct_app_secret(parent["metadata"])
-      desired_children << app_auth_secret
-      desired_children << construct_app_deployment(
-        parent["metadata"], parent["spec"], app_auth_secret
-      )
-      app_service = construct_service(parent["metadata"], { "app.kubernetes.io/component": "app" })
-      desired_children << app_service
-      desired_children << construct_ingress(parent["metadata"], app_service)
+      db_secret = desired_children.find { |r| r.kind == "Secret" && r.name.end_with?("db") }
+      desired_children += construct_app_resources(parent, db_secret)
 
       # We might eventually want a mechanism to build status based on the world:
       #   status = compare_children(request_body["children"], desired_children)
@@ -208,48 +206,97 @@ module BlogController
       { status:, children: desired_children.map(&:render) }
     end
 
-    def construct_db_stateful_set(meta)
-      stateful_set = Metatron::Templates::StatefulSet.new(meta["name"])
+    def construct_app_resources(parent, db_secret)
+      resources = []
+      app_db_secret = construct_app_secret(parent["metadata"], db_secret)
+      resources << app_db_secret
+      app_deployment = construct_app_deployment(
+        parent["metadata"], parent["spec"], app_db_secret
+      )
+      resources << app_deployment
+      app_service = construct_service(parent["metadata"], app_deployment)
+      resources << app_service
+      resources << construct_ingress(parent["metadata"], app_service)
+      resources
+    end
+
+    def construct_db_resources(parent, existing_children)
+      resources = []
+      db_secret = construct_db_secret(parent["metadata"], existing_children["Secret.v1"])
+      resources << db_secret
+      db_stateful_set = construct_db_stateful_set(db_secret)
+      resources << db_stateful_set
+      db_service = construct_service(
+        parent["metadata"], db_stateful_set, name: "db", port: 3306
+      )
+      resources << db_service
+      resources
+    end
+
+    def construct_db_stateful_set(secret)
+      stateful_set = Metatron::Templates::StatefulSet.new("db")
       stateful_set.image = "mysql:8.0"
-      stateful_set.additional_pod_labels = {
-        "app.kubernetes.io/component": "db"
-      }
-      # Do other things to setup your DB
+      stateful_set.additional_pod_labels = { "app.kubernetes.io/component": "db" }
+      stateful_set.envfrom << secret.name
       stateful_set
     end
 
     def construct_app_deployment(meta, spec, auth_secret)
       deployment = Metatron::Templates::Deployment.new(meta["name"], replicas: spec["replicas"])
       deployment.image = spec["image"]
-      deployment.additional_pod_labels = {
-        "app.kubernetes.io/component": "app"
-      }
+      deployment.additional_pod_labels = { "app.kubernetes.io/component": "app" }
+      deployment.env["WORDPRESS_DB_HOST"] = "db"
       deployment.envfrom << auth_secret.name
-      # Do other things to setup your App
       deployment
     end
 
     def construct_ingress(meta, service)
       ingress = Metatron::Templates::Ingress.new(meta["name"])
       ingress.add_rule(
-        "#{meta["name"]}.blogs.example.com": { service.name => service.ports.first[:name] }
+        "#{meta["name"]}.blogs.therubyist.org": { service.name => service.ports.first[:name] }
       )
-      ingress.add_tls("#{meta["name"]}.blogs.example.com")
+      ingress.add_tls("#{meta["name"]}.blogs.therubyist.org")
       ingress
     end
 
-    def construct_service(meta, selector_labels, port = "9292")
-      service = Metatron::Templates::Service.new(meta["name"], port)
-      service.additional_selector_labels = selector_labels
+    def construct_service(meta, resource, name: meta["name"], port: "80")
+      service = Metatron::Templates::Service.new(name, port)
+      service.additional_selector_labels = resource.additional_pod_labels
       service
     end
 
-    def construct_app_secret(meta)
+    def construct_app_secret(meta, db_secret)
+      # We'll want to use the password we specified for the DB user
+      user_pass = db_secret.data["MYSQL_PASSWORD"]
       Metatron::Templates::Secret.new(
-        meta["name"],
-        # Maybe base this off of the name, or pull it from a DB or some external service?
-        { "APP_USER" => "author", "APP_PASS" => "sUP3r_S3CREt99" }
+        "#{meta["name"]}app",
+        {
+          "WORDPRESS_DB_USER" => meta["name"],
+          "WORDPRESS_DB_PASSWORD" => user_pass,
+          "WORDPRESS_DB_NAME" => meta["name"]
+        }
       )
+    end
+
+    def construct_db_secret(meta, existing_secrets)
+      name = "#{meta["name"]}db"
+      existing = (existing_secrets || {})[name]
+      data = if existing
+        {
+          "MYSQL_ROOT_PASSWORD" => Base64.decode64(existing.dig("data", "MYSQL_ROOT_PASSWORD")),
+          "MYSQL_DATABASE" => Base64.decode64(existing.dig("data", "MYSQL_DATABASE")),
+          "MYSQL_USER" => Base64.decode64(existing.dig("data", "MYSQL_USER")),
+          "MYSQL_PASSWORD" => Base64.decode64(existing.dig("data", "MYSQL_USER"))
+        }
+      else
+        {
+          "MYSQL_ROOT_PASSWORD" => SecureRandom.urlsafe_base64(12),
+          "MYSQL_DATABASE" => meta["name"],
+          "MYSQL_USER" => meta["name"],
+          "MYSQL_PASSWORD" => SecureRandom.urlsafe_base64(8)
+        }
+      end
+      Metatron::Templates::Secret.new(name, data)
     end
   end
 end
@@ -286,13 +333,16 @@ Once we've confirmed this works, we'll need to publish our image somewhere and r
 After your Metatron controller is up and running in your Kubernetes cluster, you'll need to actually `kubectl apply` your `blog-controller.yaml` file we created way above. Once that is deployed, you can create new `Blog` resources that look something like this (let's call it `test-blog.yaml`):
 
 ```yaml
-apiVersion: example.com/v1
+apiVersion: therubyist.org/v1
 kind: Blog
 metadata:
   name: test
 spec:
-  image: my.registry/blog:tag
+  image: wordpress:6
   replicas: 2
+  storage:
+    app: 15Gi
+    db: 5Gi
 ```
 
 Note that `my.registry/blog:tag` should point to some image that is ready to run a blog. This is just an example and, much like the other resources we've created in this guide, it will almost certainly not work as-is.
