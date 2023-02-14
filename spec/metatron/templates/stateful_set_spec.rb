@@ -11,7 +11,7 @@ RSpec.describe Metatron::Templates::StatefulSet do
         metadata: { labels: { "metatron.therubyist.org/name": "test" }, name: "test" },
         spec: {
           enableServiceLinks: true,
-          replicas: 2,
+          replicas: 1,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test" } },
           serviceName: "test",
           strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
