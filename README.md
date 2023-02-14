@@ -157,22 +157,22 @@ Finally, before we start hacking on some actual Metatron-related code, we'll nee
 
 ```dockerfile
 FROM ruby:3.1
- 
+
 RUN mkdir -p /app
- 
+
 COPY config.ru /app/
 COPY Gemfile /app/
 COPY Gemfile.lock /app/
 COPY lib/ /app/lib/
- 
+
 RUN apt update && apt upgrade -y
 RUN useradd appuser -d /app -M -c "App User"
 RUN chown appuser /app/Gemfile.lock
- 
+
 USER appuser
 WORKDIR /app
 RUN bundle install
- 
+
 ENTRYPOINT ["bundle", "exec"]
 CMD ["puma"]
 ```
@@ -245,8 +245,8 @@ module BlogController
       deployment = Metatron::Templates::Deployment.new(meta["name"], replicas: spec["replicas"])
       deployment.image = spec["image"]
       deployment.additional_pod_labels = { "app.kubernetes.io/component": "app" }
-      deployment.env["WORDPRESS_DB_HOST"] = "db"
       deployment.envfrom << auth_secret.name
+      deployment.ports << { name: "web", containerPort: 3000 }
       deployment
     end
 
@@ -259,7 +259,7 @@ module BlogController
       ingress
     end
 
-    def construct_service(meta, resource, name: meta["name"], port: "80")
+    def construct_service(meta, resource, name: meta["name"], port: "3000")
       service = Metatron::Templates::Service.new(name, port)
       service.additional_selector_labels = resource.additional_pod_labels
       service
@@ -271,9 +271,7 @@ module BlogController
       Metatron::Templates::Secret.new(
         "#{meta["name"]}app",
         {
-          "WORDPRESS_DB_USER" => meta["name"],
-          "WORDPRESS_DB_PASSWORD" => user_pass,
-          "WORDPRESS_DB_NAME" => meta["name"]
+          "DATABASE_URL" => "mysql2://#{meta["name"]}:#{user_pass}@db:3306/#{meta["name"]}"
         }
       )
     end
@@ -282,20 +280,20 @@ module BlogController
       name = "#{meta["name"]}db"
       existing = (existing_secrets || {})[name]
       data = if existing
-        {
-          "MYSQL_ROOT_PASSWORD" => Base64.decode64(existing.dig("data", "MYSQL_ROOT_PASSWORD")),
-          "MYSQL_DATABASE" => Base64.decode64(existing.dig("data", "MYSQL_DATABASE")),
-          "MYSQL_USER" => Base64.decode64(existing.dig("data", "MYSQL_USER")),
-          "MYSQL_PASSWORD" => Base64.decode64(existing.dig("data", "MYSQL_USER"))
-        }
-      else
-        {
-          "MYSQL_ROOT_PASSWORD" => SecureRandom.urlsafe_base64(12),
-          "MYSQL_DATABASE" => meta["name"],
-          "MYSQL_USER" => meta["name"],
-          "MYSQL_PASSWORD" => SecureRandom.urlsafe_base64(8)
-        }
-      end
+               {
+                 "MYSQL_ROOT_PASSWORD" => Base64.decode64(existing.dig("data", "MYSQL_ROOT_PASSWORD")),
+                 "MYSQL_DATABASE" => Base64.decode64(existing.dig("data", "MYSQL_DATABASE")),
+                 "MYSQL_USER" => Base64.decode64(existing.dig("data", "MYSQL_USER")),
+                 "MYSQL_PASSWORD" => Base64.decode64(existing.dig("data", "MYSQL_PASSWORD"))
+               }
+             else
+               {
+                 "MYSQL_ROOT_PASSWORD" => SecureRandom.urlsafe_base64(12),
+                 "MYSQL_DATABASE" => meta["name"],
+                 "MYSQL_USER" => meta["name"],
+                 "MYSQL_PASSWORD" => SecureRandom.urlsafe_base64(8)
+               }
+             end
       Metatron::Templates::Secret.new(name, data)
     end
   end
@@ -338,14 +336,14 @@ kind: Blog
 metadata:
   name: test
 spec:
-  image: wordpress:6
+  image: myapp:tag
   replicas: 2
   storage:
     app: 15Gi
     db: 5Gi
 ```
 
-Note that `my.registry/blog:tag` should point to some image that is ready to run a blog. This is just an example and, much like the other resources we've created in this guide, it will almost certainly not work as-is.
+Note that `myapp:tag` should point to some image that is ready to run a blog. This is just an example and, much like the other resources we've created in this guide, it will almost certainly not work as-is. The `DATABASE_URL` secret we create in our Metatron controller should work well for a [Ruby on Rails](https://rubyonrails.org/) app though.
 
 Let's make a new namespace for this blog and launch it:
 
