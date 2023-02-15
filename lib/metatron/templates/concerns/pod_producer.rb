@@ -11,7 +11,7 @@ module Metatron
             attr_accessor :image, :image_pull_policy, :additional_labels, :env, :envfrom,
                           :resource_limits, :resource_requests, :probes, :ports, :security_context,
                           :volume_mounts, :volumes, :additional_containers,
-                          :container_security_context, :affinity
+                          :container_security_context, :affinity, :termination_grace_period_seconds
 
             initializer :pod_producer_initialize
 
@@ -19,6 +19,7 @@ module Metatron
             alias_method :volumeMounts, :volume_mounts
             alias_method :securityContext, :security_context
             alias_method :environment, :env
+            alias_method :terminationGracePeriodSeconds, :termination_grace_period_seconds
           end
         end
 
@@ -38,6 +39,7 @@ module Metatron
           @container_security_context = {}
           @additional_containers = []
           @additional_labels = {}
+          @termination_grace_period_seconds = 60
         end
 
         def formatted_affinity

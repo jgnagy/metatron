@@ -2,8 +2,8 @@
 
 module Metatron
   module Templates
-    # The Deployment Kubernetes resource
-    class Deployment < Template
+    # The ReplicaSet Kubernetes resource
+    class ReplicaSet < Template
       include Concerns::Annotated
       include Concerns::PodProducer
 
@@ -13,7 +13,7 @@ module Metatron
       def initialize(name, replicas: 2)
         super(name)
         @api_version = "apps/v1"
-        @kind = "Deployment"
+        @kind = "ReplicaSet"
         @replicas = replicas
         @pod_annotations = {}
         @additional_pod_labels = {}
@@ -35,7 +35,6 @@ module Metatron
           }.merge(formatted_annotations),
           spec: {
             replicas:,
-            strategy: { type: "RollingUpdate", rollingUpdate: { maxSurge: 2, maxUnavailable: 0 } },
             selector: {
               matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
             },

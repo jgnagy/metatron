@@ -12,6 +12,7 @@ module Metatron
         @kind = "Pod"
       end
 
+      # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
       def render
         {
@@ -22,6 +23,7 @@ module Metatron
             name:
           }.merge(formatted_annotations),
           spec: {
+            terminationGracePeriodSeconds:,
             containers: [
               {
                 name: "app",
@@ -41,6 +43,7 @@ module Metatron
         }
       end
       # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

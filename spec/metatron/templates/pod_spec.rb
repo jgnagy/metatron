@@ -10,6 +10,7 @@ RSpec.describe Metatron::Templates::Pod do
         kind: "Pod",
         metadata: { labels: { "metatron.therubyist.org/name": "test" }, name: "test" },
         spec: {
+          terminationGracePeriodSeconds: 60,
           containers: [
             {
               image: "gcr.io/google_containers/pause",
@@ -61,6 +62,7 @@ RSpec.describe Metatron::Templates::Pod do
           name: "test"
         },
         spec: {
+          terminationGracePeriodSeconds: 60,
           containers: [
             {
               env: [

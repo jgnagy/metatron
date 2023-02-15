@@ -9,7 +9,7 @@ module Metatron
 
       attr_accessor :replicas, :pod_annotations, :service_name,
                     :pod_management_policy, :enable_service_links,
-                    :termination_grace_period_seconds, :additional_pod_labels
+                    :additional_pod_labels
 
       def initialize(name, replicas: 1)
         super(name)
@@ -21,12 +21,10 @@ module Metatron
         @additional_pod_labels = {}
         @enable_service_links = true
         @service_name = name
-        @termination_grace_period_seconds = 60
       end
 
       alias enableServiceLinks enable_service_links
       alias podManagementPolicy pod_management_policy
-      alias terminationGracePeriodSeconds termination_grace_period_seconds
       alias serviceName service_name
 
       def formatted_pod_annotations

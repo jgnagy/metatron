@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
-RSpec.describe Metatron::Templates::Deployment do
-  describe "for simple deployments" do
-    let(:deployment) { described_class.new("test") }
+RSpec.describe Metatron::Templates::ReplicaSet do
+  describe "for simple replica sets" do
+    let(:replica_set) { described_class.new("test") }
 
-    let(:rendered_deployment) do
+    let(:rendered_replica_set) do
       {
         apiVersion: "apps/v1",
-        kind: "Deployment",
+        kind: "ReplicaSet",
         metadata: { labels: { "metatron.therubyist.org/name": "test" }, name: "test" },
         spec: {
           replicas: 2,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test" } },
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test" } },
             spec: {
@@ -37,16 +36,16 @@ RSpec.describe Metatron::Templates::Deployment do
     end
 
     it "produces a hash" do
-      expect(deployment.render).to be_a(Hash)
+      expect(replica_set.render).to be_a(Hash)
     end
 
     it "renders properly" do
-      expect(deployment.render).to eq(rendered_deployment)
+      expect(replica_set.render).to eq(rendered_replica_set)
     end
   end
 
-  describe "for complex deployments" do
-    let(:deployment) do
+  describe "for complex replica sets" do
+    let(:replica_set) do
       dep = described_class.new("test")
       dep.image = "some.registry/some/image:tag"
       dep.annotations = { "a.test/foo": "bar" }
@@ -74,10 +73,10 @@ RSpec.describe Metatron::Templates::Deployment do
       dep
     end
 
-    let(:rendered_deployment) do
+    let(:rendered_replica_set) do
       {
         apiVersion: "apps/v1",
-        kind: "Deployment",
+        kind: "ReplicaSet",
         metadata: {
           annotations: { "a.test/foo": "bar" },
           labels: {
@@ -91,7 +90,6 @@ RSpec.describe Metatron::Templates::Deployment do
           selector: {
             matchLabels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
           },
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
           template: {
             metadata: {
               labels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
@@ -137,11 +135,11 @@ RSpec.describe Metatron::Templates::Deployment do
     end
 
     it "produces a hash" do
-      expect(deployment.render).to be_a(Hash)
+      expect(replica_set.render).to be_a(Hash)
     end
 
     it "renders properly" do
-      expect(deployment.render).to eq(rendered_deployment)
+      expect(replica_set.render).to eq(rendered_replica_set)
     end
   end
 end
