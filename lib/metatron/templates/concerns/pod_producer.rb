@@ -11,7 +11,8 @@ module Metatron
             attr_accessor :image, :image_pull_policy, :additional_labels, :env, :envfrom,
                           :resource_limits, :resource_requests, :probes, :ports, :security_context,
                           :volume_mounts, :volumes, :additional_containers,
-                          :container_security_context, :affinity, :termination_grace_period_seconds
+                          :container_security_context, :affinity, :termination_grace_period_seconds,
+                          :tolerations
 
             initializer :pod_producer_initialize
 
@@ -40,11 +41,10 @@ module Metatron
           @additional_containers = []
           @additional_labels = {}
           @termination_grace_period_seconds = 60
+          @tolerations = []
         end
 
-        def formatted_affinity
-          affinity && !affinity.empty? ? { affinity: } : {}
-        end
+        def formatted_affinity = affinity && !affinity.empty? ? { affinity: } : {}
 
         def formatted_environment
           env && !env.empty? ? { env: env.map { |k, v| { name: k, value: v } } } : {}
@@ -58,9 +58,7 @@ module Metatron
           end
         end
 
-        def formatted_ports
-          ports&.any? ? { ports: } : {}
-        end
+        def formatted_ports = ports&.any? ? { ports: } : {}
 
         def formatted_security_context
           security_context && !security_context.empty? ? { securityContext: } : {}
@@ -74,13 +72,9 @@ module Metatron
           end
         end
 
-        def formatted_volume_mounts
-          volume_mounts&.any? ? { volumeMounts: } : {}
-        end
-
-        def formatted_volumes
-          volumes&.any? ? { volumes: } : {}
-        end
+        def formatted_tolerations = tolerations&.any? ? { tolerations: } : {}
+        def formatted_volume_mounts = volume_mounts&.any? ? { volumeMounts: } : {}
+        def formatted_volumes = volumes&.any? ? { volumes: } : {}
       end
     end
   end

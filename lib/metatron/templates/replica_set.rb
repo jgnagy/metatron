@@ -59,7 +59,9 @@ module Metatron
                     .merge(formatted_volume_mounts)
                     .merge(formatted_container_security_context)
                 ] + additional_containers
-              }.merge(formatted_volumes).merge(formatted_security_context)
+              }.merge(formatted_volumes)
+                .merge(formatted_security_context)
+                .merge(formatted_tolerations)
             }
           }
         }
