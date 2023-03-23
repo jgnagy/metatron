@@ -13,7 +13,6 @@ module Metatron
       def initialize(name)
         super(name)
         @api_version = "apps/v1"
-        @kind = "DaemonSet"
         @pod_annotations = {}
         @additional_pod_labels = {}
       end

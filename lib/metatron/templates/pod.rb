@@ -7,11 +7,6 @@ module Metatron
       include Concerns::Annotated
       include Concerns::PodProducer
 
-      def initialize(name)
-        super(name)
-        @kind = "Pod"
-      end
-
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
       def render

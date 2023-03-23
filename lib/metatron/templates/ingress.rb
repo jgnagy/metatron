@@ -9,10 +9,8 @@ module Metatron
 
       def initialize(name, ingress_class = "nginx")
         super(name)
-        @name = name
         @ingress_class = ingress_class
         @api_version = "networking.k8s.io/v1"
-        @kind = "Ingress"
         @additional_labels = {}
         @additional_annotations = {}
       end

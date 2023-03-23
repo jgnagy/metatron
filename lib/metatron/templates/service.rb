@@ -11,7 +11,6 @@ module Metatron
 
       def initialize(name, port = nil)
         super(name)
-        @kind = "Service"
         @type = "ClusterIP"
         @selector = { "#{label_namespace}/name": name }
         @additional_labels = {}

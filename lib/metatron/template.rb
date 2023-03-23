@@ -10,6 +10,7 @@ module Metatron
       @name = name
       @label_namespace = "metatron.therubyist.org"
       @api_version = "v1"
+      @kind = self.class.name.split("::").last
       run_initializers
     end
 

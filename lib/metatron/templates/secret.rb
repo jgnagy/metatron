@@ -12,7 +12,6 @@ module Metatron
         super(name)
         @data = data
         @additional_labels = {}
-        @kind = "Secret"
         @type = "Opaque"
       end
 

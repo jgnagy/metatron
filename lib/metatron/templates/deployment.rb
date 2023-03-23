@@ -13,7 +13,6 @@ module Metatron
       def initialize(name, replicas: 2)
         super(name)
         @api_version = "apps/v1"
-        @kind = "Deployment"
         @replicas = replicas
         @pod_annotations = {}
         @additional_pod_labels = {}

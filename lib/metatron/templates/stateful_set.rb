@@ -15,7 +15,6 @@ module Metatron
         super(name)
         @replicas = replicas
         @api_version = "apps/v1"
-        @kind = "StatefulSet"
         @pod_annotations = {}
         @pod_management_policy = "OrderedReady"
         @additional_pod_labels = {}
