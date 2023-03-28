@@ -7,17 +7,13 @@ module Metatron
       include Concerns::Annotated
       include Concerns::PodProducer
 
-      attr_accessor :replicas, :pod_annotations, :service_name,
-                    :pod_management_policy, :enable_service_links,
-                    :additional_pod_labels
+      attr_accessor :replicas, :service_name, :pod_management_policy, :enable_service_links
 
       def initialize(name, replicas: 1)
         super(name)
         @replicas = replicas
         @api_version = "apps/v1"
-        @pod_annotations = {}
         @pod_management_policy = "OrderedReady"
-        @additional_pod_labels = {}
         @enable_service_links = true
         @service_name = name
       end
@@ -25,10 +21,6 @@ module Metatron
       alias enableServiceLinks enable_service_links
       alias podManagementPolicy pod_management_policy
       alias serviceName service_name
-
-      def formatted_pod_annotations
-        pod_annotations && !pod_annotations.empty? ? { annotations: pod_annotations } : {}
-      end
 
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize

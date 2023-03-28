@@ -7,19 +7,12 @@ module Metatron
       include Concerns::Annotated
       include Concerns::PodProducer
 
-      attr_accessor :replicas, :pod_annotations,
-                    :additional_labels, :additional_pod_labels
+      attr_accessor :replicas, :additional_labels
 
       def initialize(name, replicas: 2)
         super(name)
         @api_version = "apps/v1"
         @replicas = replicas
-        @pod_annotations = {}
-        @additional_pod_labels = {}
-      end
-
-      def formatted_pod_annotations
-        pod_annotations && !pod_annotations.empty? ? { annotations: pod_annotations } : {}
       end
 
       # rubocop:disable Metrics/MethodLength

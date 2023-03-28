@@ -11,7 +11,7 @@ require "logger"
 require "sinatra/base"
 require "sinatra/custom_logger"
 
-# The top-level module for Bullion
+# The top-level module for Metatron
 module Metatron
   class Error < StandardError; end
   class ConfigError < Error; end
@@ -32,6 +32,7 @@ require "metatron/templates/persistent_volume_claim"
 require "metatron/templates/deployment"
 require "metatron/templates/ingress"
 require "metatron/templates/replica_set"
+require "metatron/templates/config_map"
 require "metatron/templates/secret"
 require "metatron/templates/service"
 require "metatron/templates/stateful_set"

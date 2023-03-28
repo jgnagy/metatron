@@ -8,11 +8,11 @@ module Metatron
         def self.included(base)
           # base.extend ClassMethods
           base.class_eval do
-            attr_accessor :image, :image_pull_policy, :additional_labels, :env, :envfrom,
+            attr_accessor :image, :image_pull_policy, :additional_labels, :additional_pod_labels,
                           :resource_limits, :resource_requests, :probes, :ports, :security_context,
-                          :volume_mounts, :volumes, :additional_containers,
+                          :volume_mounts, :volumes, :additional_containers, :env, :envfrom,
                           :container_security_context, :affinity, :termination_grace_period_seconds,
-                          :tolerations
+                          :tolerations, :pod_annotations
 
             initializer :pod_producer_initialize
 
@@ -40,6 +40,8 @@ module Metatron
           @container_security_context = {}
           @additional_containers = []
           @additional_labels = {}
+          @additional_pod_labels = {}
+          @pod_annotations = {}
           @termination_grace_period_seconds = 60
           @tolerations = []
         end
@@ -56,6 +58,10 @@ module Metatron
           else
             {}
           end
+        end
+
+        def formatted_pod_annotations
+          pod_annotations && !pod_annotations.empty? ? { annotations: pod_annotations } : {}
         end
 
         def formatted_ports = ports&.any? ? { ports: } : {}
