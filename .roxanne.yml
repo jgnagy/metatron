@@ -1,14 +1,14 @@
 version: 1.0
 stages:
   build:
-    image: docker.io/ruby:3.2
+    image: ruby:3.2
     scripts:
     - ./scripts/build.sh
   test:
-    image: docker.io/ruby:3.2
+    image: ruby:3.2
     scripts:
     - ./scripts/test.sh
   release:
-    image: docker.io/ruby:3.2
+    image: ruby:3.2
     only:
     - main
