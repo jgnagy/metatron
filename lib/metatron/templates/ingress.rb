@@ -45,7 +45,7 @@ module Metatron
           cert_manager[:"cert-manager.io/cluster-issuer"] = cert_manager_cluster_issuer
         end
         unless cert_manager.empty?
-          cert_manager[:"cert-manager.io/acme-challenge-type"] = \
+          cert_manager[:"cert-manager.io/acme-challenge-type"] =
             cert_manager_challenge_type || "http01"
         end
 
