@@ -5,6 +5,7 @@ module Metatron
     # The PersistentVolumeClaim Kubernetes resource
     class PersistentVolumeClaim < Template
       include Concerns::Annotated
+      include Concerns::Namespaced
 
       attr_accessor :additional_labels, :storage_class, :access_modes, :storage
 
@@ -28,7 +29,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             accessModes: access_modes,
             storageClassName: storage_class,

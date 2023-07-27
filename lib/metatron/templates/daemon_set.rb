@@ -5,6 +5,7 @@ module Metatron
     # The DaemonSet Kubernetes resource
     class DaemonSet < Template
       include Concerns::Annotated
+      include Concerns::Namespaced
       include Concerns::PodProducer
 
       attr_accessor :replicas, :additional_labels
@@ -23,7 +24,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             selector: {
               matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)

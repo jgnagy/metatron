@@ -2,16 +2,12 @@
 
 module Metatron
   module Templates
-    # The ConfigMap Kubernetes resource
-    class ConfigMap < Template
-      include Concerns::Annotated
-      include Concerns::Namespaced
+    # Template for basic Namespace k8s resource
+    class Namespace < Template
+      attr_accessor :additional_labels
 
-      attr_accessor :additional_labels, :type, :data
-
-      def initialize(name, data = {})
+      def initialize(name)
         super(name)
-        @data = data
         @additional_labels = {}
       end
 
@@ -22,8 +18,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations).merge(formatted_namespace),
-          data:
+          }.merge(formatted_annotations)
         }
       end
     end

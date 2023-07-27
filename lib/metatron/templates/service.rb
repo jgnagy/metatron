@@ -5,6 +5,7 @@ module Metatron
     # The Service Kubernetes resource
     class Service < Template
       include Concerns::Annotated
+      include Concerns::Namespaced
 
       attr_accessor :type, :selector, :additional_labels, :ports,
                     :additional_selector_labels, :publish_not_ready_addresses
@@ -41,7 +42,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             type:,
             selector: selector.merge(additional_selector_labels),

@@ -6,6 +6,7 @@ module Metatron
     class Pod < Template
       include Concerns::Annotated
       include Concerns::PodProducer
+      include Concerns::Namespaced
 
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
@@ -16,7 +17,7 @@ module Metatron
           metadata: {
             labels: { "#{label_namespace}/name": name }.merge(additional_labels),
             name:
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             terminationGracePeriodSeconds:,
             containers: [

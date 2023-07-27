@@ -5,6 +5,7 @@ module Metatron
     # The Deployment Kubernetes resource
     class Deployment < Template
       include Concerns::Annotated
+      include Concerns::Namespaced
       include Concerns::PodProducer
 
       attr_accessor :replicas, :additional_labels
@@ -34,7 +35,7 @@ module Metatron
             template: {
               metadata: {
                 labels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
-              }.merge(formatted_pod_annotations),
+              }.merge(formatted_pod_annotations).merge(formatted_namespace),
               spec: {
                 terminationGracePeriodSeconds:,
                 containers: [

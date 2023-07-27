@@ -4,6 +4,6 @@ module Metatron
   VERSION = [
     0, # major
     1, # minor
-    8  # patch
+    9  # patch
   ].join(".")
 end

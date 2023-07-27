@@ -6,6 +6,7 @@ module Metatron
     class ReplicaSet < Template
       include Concerns::Annotated
       include Concerns::PodProducer
+      include Concerns::Namespaced
 
       attr_accessor :replicas, :additional_labels
 
@@ -24,7 +25,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             replicas:,
             selector: {

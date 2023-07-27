@@ -4,6 +4,8 @@ module Metatron
   module Templates
     # Template for basic Ingress k8s resource
     class Ingress < Template
+      include Concerns::Namespaced
+
       attr_accessor :ingress_class, :additional_labels, :additional_annotations, :rules, :tls,
                     :cert_manager_cluster_issuer, :cert_manager_issuer, :cert_manager_challenge_type
 
@@ -76,7 +78,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: formatted_rules.merge(formatted_tls)
         }
       end

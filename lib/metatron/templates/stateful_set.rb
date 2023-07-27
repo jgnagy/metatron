@@ -6,6 +6,7 @@ module Metatron
     class StatefulSet < Template
       include Concerns::Annotated
       include Concerns::PodProducer
+      include Concerns::Namespaced
 
       attr_accessor :replicas, :service_name, :pod_management_policy, :enable_service_links
 
@@ -31,7 +32,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             replicas:,
             serviceName:,
