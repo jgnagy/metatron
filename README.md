@@ -203,7 +203,7 @@ module BlogController
       #   status = compare_children(request_body["children"], desired_children)
       status = {}
 
-      { status:, children: desired_children.map(&:render) }
+      { status:, children: desired_children }
     end
 
     def construct_app_resources(parent, db_secret)
@@ -235,18 +235,23 @@ module BlogController
 
     def construct_db_stateful_set(secret)
       stateful_set = Metatron::Templates::StatefulSet.new("db")
-      stateful_set.image = "mysql:8.0"
+      container = Metatron::Templates::Container.new("db")
+      container.image = "mysql:8.0"
+      container.envfrom << secret.name
+      stateful_set.containers << container
       stateful_set.additional_pod_labels = { "app.kubernetes.io/component": "db" }
-      stateful_set.envfrom << secret.name
       stateful_set
     end
 
     def construct_app_deployment(meta, spec, auth_secret)
       deployment = Metatron::Templates::Deployment.new(meta["name"], replicas: spec["replicas"])
-      deployment.image = spec["image"]
+      container = Metatron::Templates::Container.new("app")
+      container.image = spec["image"]
+      container.envfrom << auth_secret.name
+      container.ports << { name: "web", containerPort: 3000 }
+
+      deployment.containers << container
       deployment.additional_pod_labels = { "app.kubernetes.io/component": "app" }
-      deployment.envfrom << auth_secret.name
-      deployment.ports << { name: "web", containerPort: 3000 }
       deployment
     end
 
