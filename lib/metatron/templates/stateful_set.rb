@@ -55,7 +55,7 @@ module Metatron
                 .compact
             }
           }
-        }
+        }.merge(volume_claim_templates)
       end
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength

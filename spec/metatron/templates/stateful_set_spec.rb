@@ -64,6 +64,10 @@ RSpec.describe Metatron::Templates::StatefulSet do
       stateful_set.termination_grace_period_seconds = 10
       stateful_set.additional_pod_labels = { foo: "bar" }
       stateful_set.service_name = "a-test"
+      stateful_set.persistent_volume_claims = [
+        Metatron::Templates::PersistentVolumeClaim.new("test", storage_class: "test",
+                                                               storage: "1Gi").render
+      ]
       stateful_set
     end
 
@@ -102,7 +106,26 @@ RSpec.describe Metatron::Templates::StatefulSet do
               terminationGracePeriodSeconds: 10
             }
           }
-        }
+        },
+        volumeClaimTemplates: [
+          {
+            apiVersion: "v1",
+            kind: "PersistentVolumeClaim",
+            metadata: {
+              name: "test",
+              labels: { "metatron.therubyist.org/name": "test" }
+            },
+            spec: {
+              accessModes: ["ReadWriteOnce"],
+              storageClassName: "test",
+              resources: {
+                requests: {
+                  storage: "1Gi"
+                }
+              }
+            }
+          }
+        ]
       }
     end
 

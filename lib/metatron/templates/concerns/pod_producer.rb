@@ -11,7 +11,7 @@ module Metatron
             attr_accessor :additional_labels, :additional_pod_labels,
                           :security_context, :volumes, :containers, :init_containers,
                           :affinity, :termination_grace_period_seconds,
-                          :tolerations, :pod_annotations
+                          :tolerations, :pod_annotations, :persistent_volume_claims
 
             initializer :pod_producer_initialize
 
@@ -31,6 +31,7 @@ module Metatron
           @pod_annotations = {}
           @termination_grace_period_seconds = nil
           @tolerations = []
+          @persistent_volume_claims = []
         end
 
         def formatted_affinity = affinity && !affinity.empty? ? { affinity: } : {}
@@ -45,6 +46,18 @@ module Metatron
 
         def formatted_tolerations = tolerations&.any? ? { tolerations: } : {}
         def formatted_volumes = volumes&.any? ? { volumes: } : {}
+
+        def volume_claim_templates
+          if persistent_volume_claims&.any?
+            {
+              volumeClaimTemplates: persistent_volume_claims.map do |c|
+                c.respond_to?(:render) ? c.render : c
+              end
+            }
+          else
+            {}
+          end
+        end
       end
     end
   end
