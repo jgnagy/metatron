@@ -9,6 +9,9 @@ module Metatron
 
       attr_accessor :additional_labels, :storage_class, :access_modes, :storage
 
+      alias storageClassName storage_class
+      alias accessModes access_modes
+
       def initialize(
         name,
         storage_class:,
@@ -31,8 +34,8 @@ module Metatron
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
           }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
-            accessModes: access_modes,
-            storageClassName: storage_class,
+            accessModes:,
+            storageClassName:,
             resources: {
               requests: {
                 storage:
