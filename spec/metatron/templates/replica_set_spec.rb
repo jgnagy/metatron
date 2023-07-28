@@ -2,7 +2,11 @@
 
 RSpec.describe Metatron::Templates::ReplicaSet do
   describe "for simple replica sets" do
-    let(:replica_set) { described_class.new("test") }
+    let(:replica_set) do
+      rs = described_class.new("test")
+      rs.containers << Metatron::Templates::Container.new("app")
+      rs
+    end
 
     let(:rendered_replica_set) do
       {
@@ -15,16 +19,11 @@ RSpec.describe Metatron::Templates::ReplicaSet do
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test" } },
             spec: {
-              terminationGracePeriodSeconds: 60,
               containers: [
                 {
                   image: "gcr.io/google_containers/pause",
                   imagePullPolicy: "IfNotPresent",
                   name: "app",
-                  resources: {
-                    limits: { cpu: "500m", memory: "512Mi" },
-                    requests: { cpu: "10m", memory: "64Mi" }
-                  },
                   stdin: true,
                   tty: true
                 }
@@ -46,31 +45,40 @@ RSpec.describe Metatron::Templates::ReplicaSet do
 
   describe "for complex replica sets" do
     let(:replica_set) do
-      dep = described_class.new("test")
-      dep.image = "some.registry/some/image:tag"
-      dep.annotations = { "a.test/foo": "bar" }
-      dep.additional_labels = { "app.kubernetes.io/part-of": "test-app" }
-      dep.replicas = 10
-      dep.additional_pod_labels = { thing: "swamp" }
-      dep.security_context = { runAsUser: 1000, runAsGroup: 1000 }
-      dep.volumes = [{ name: "tmpvol", emptyDir: {} }]
-      dep.volume_mounts = [{ mountPath: "/tmp", name: "tmpvol" }]
-      dep.env = { REDIS: "redis:6379", LOG_LEVEL: "DEBUG" }
-      dep.ports = [{ name: "web", containerPort: 8080 }]
-      dep.probes = {
+      rs = described_class.new("test")
+
+      container = Metatron::Templates::Container.new("app")
+      container.image = "some.registry/some/image:tag"
+      container.volume_mounts = [{ mountPath: "/tmp", name: "tmpvol" }]
+      container.env = { REDIS: "redis:6379", LOG_LEVEL: "DEBUG" }
+      container.ports = [{ name: "web", containerPort: 8080 }]
+      container.probes = {
         readinessProbe: {
           httpGet: { path: "/ping", port: "web" },
           periodSeconds: 5,
           failureThreshold: 3
         }
       }
-      dep.container_security_context = {
+      container.resources = {
+        limits: { cpu: "500m", memory: "512Mi" },
+        requests: { cpu: "10m", memory: "64Mi" }
+      }
+      container.security_context = {
         privileged: false,
         runAsNonRoot: true,
         readOnlyRootFilesystem: true,
         capabilities: { drop: ["all"] }
       }
-      dep
+
+      rs.containers << container
+      rs.annotations = { "a.test/foo": "bar" }
+      rs.additional_labels = { "app.kubernetes.io/part-of": "test-app" }
+      rs.replicas = 10
+      rs.additional_pod_labels = { thing: "swamp" }
+      rs.security_context = { runAsUser: 1000, runAsGroup: 1000 }
+      rs.volumes = [{ name: "tmpvol", emptyDir: {} }]
+
+      rs
     end
 
     let(:rendered_replica_set) do
@@ -95,7 +103,6 @@ RSpec.describe Metatron::Templates::ReplicaSet do
               labels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
             },
             spec: {
-              terminationGracePeriodSeconds: 60,
               containers: [
                 {
                   env: [

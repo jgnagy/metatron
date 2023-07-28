@@ -2,17 +2,25 @@
 
 module Metatron
   module Templates
-    # The DaemonSet Kubernetes resource
-    class DaemonSet < Template
+    # Template for basic Job k8s resource
+    class Job < Template
       include Concerns::Annotated
-      include Concerns::Namespaced
       include Concerns::PodProducer
+      include Concerns::Namespaced
 
-      attr_accessor :replicas, :additional_labels
+      attr_accessor :backoff_limit, :completions, :parallelism, :restart_policy,
+                    :pod_failure_policy, :active_deadline_seconds, :ttl_seconds_after_finished,
+                    :suspend
+
+      alias activeDeadlineSeconds active_deadline_seconds
+      alias backoffLimit backoff_limit
+      alias podFailurePolicy pod_failure_policy
+      alias restartPolicy restart_policy
+      alias ttlSecondsAfterFinished ttl_seconds_after_finished
 
       def initialize(name)
         super(name)
-        @api_version = "apps/v1"
+        @api_version = "batch/v1"
       end
 
       # rubocop:disable Metrics/AbcSize
@@ -22,27 +30,29 @@ module Metatron
           apiVersion:,
           kind:,
           metadata: {
-            name:,
-            labels: { "#{label_namespace}/name": name }.merge(additional_labels)
+            labels: { "#{label_namespace}/name": name }.merge(additional_labels),
+            name:
           }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
-            selector: {
-              matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
-            },
+            suspend:,
+            backoffLimit:,
+            activeDeadlineSeconds:,
+            completions:,
+            parallelism:,
+            podFailurePolicy:,
+            ttlSecondsAfterFinished:,
             template: {
-              metadata: {
-                labels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
-              }.merge(formatted_pod_annotations),
               spec: {
                 terminationGracePeriodSeconds:,
+                restartPolicy:,
                 containers: containers.map(&:render),
                 init_containers: init_containers.any? ? init_containers.map(&:render) : nil
               }.merge(formatted_volumes)
                 .merge(formatted_security_context)
                 .merge(formatted_tolerations)
                 .compact
-            }
-          }
+            }.compact
+          }.compact
         }
       end
       # rubocop:enable Metrics/AbcSize

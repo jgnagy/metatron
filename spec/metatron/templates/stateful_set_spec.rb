@@ -2,7 +2,11 @@
 
 RSpec.describe Metatron::Templates::StatefulSet do
   describe "for simple stateful sets" do
-    let(:stateful_set) { described_class.new("test") }
+    let(:stateful_set) do
+      stateful_set = described_class.new("test")
+      stateful_set.containers << Metatron::Templates::Container.new("app")
+      stateful_set
+    end
 
     let(:rendered_stateful_set) do
       {
@@ -23,15 +27,10 @@ RSpec.describe Metatron::Templates::StatefulSet do
                   image: "gcr.io/google_containers/pause",
                   imagePullPolicy: "IfNotPresent",
                   name: "app",
-                  resources: {
-                    limits: { cpu: "500m", memory: "512Mi" },
-                    requests: { cpu: "10m", memory: "64Mi" }
-                  },
                   stdin: true,
                   tty: true
                 }
-              ],
-              terminationGracePeriodSeconds: 60
+              ]
             }
           }
         }
@@ -50,12 +49,21 @@ RSpec.describe Metatron::Templates::StatefulSet do
   describe "for complex stateful sets" do
     let(:stateful_set) do
       stateful_set = described_class.new("test")
+
+      container = Metatron::Templates::Container.new("app")
+      container.image = "some.registry/some/image:tag"
+      container.envfrom = ["foo"]
+      container.resources = {
+        limits: { cpu: "500m", memory: "512Mi" },
+        requests: { cpu: "10m", memory: "64Mi" }
+      }
+
+      stateful_set.containers << container
+      stateful_set.namespace = "atestnamespace"
       stateful_set.replicas = 5
-      stateful_set.image = "some.registry/some/image:tag"
       stateful_set.termination_grace_period_seconds = 10
       stateful_set.additional_pod_labels = { foo: "bar" }
       stateful_set.service_name = "a-test"
-      stateful_set.envfrom = ["foo"]
       stateful_set
     end
 
@@ -63,7 +71,11 @@ RSpec.describe Metatron::Templates::StatefulSet do
       {
         apiVersion: "apps/v1",
         kind: "StatefulSet",
-        metadata: { labels: { "metatron.therubyist.org/name": "test" }, name: "test" },
+        metadata: {
+          labels: { "metatron.therubyist.org/name": "test" },
+          name: "test",
+          namespace: "atestnamespace"
+        },
         spec: {
           enableServiceLinks: true,
           replicas: 5,

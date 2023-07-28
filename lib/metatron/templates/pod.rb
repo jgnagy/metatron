@@ -8,7 +8,6 @@ module Metatron
       include Concerns::PodProducer
       include Concerns::Namespaced
 
-      # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
       def render
         {
@@ -20,28 +19,15 @@ module Metatron
           }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             terminationGracePeriodSeconds:,
-            containers: [
-              {
-                name: "app",
-                image:,
-                imagePullPolicy:,
-                stdin: true,
-                tty: true,
-                resources: { limits: resource_limits, requests: resource_requests }
-              }.merge(probes)
-                .merge(formatted_environment)
-                .merge(formatted_envfrom)
-                .merge(formatted_ports)
-                .merge(formatted_volume_mounts)
-                .merge(formatted_container_security_context)
-            ] + additional_containers
+            containers: containers.map(&:render),
+            init_containers: init_containers.any? ? init_containers.map(&:render) : nil
           }.merge(formatted_volumes)
             .merge(formatted_security_context)
             .merge(formatted_tolerations)
+            .compact
         }
       end
       # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

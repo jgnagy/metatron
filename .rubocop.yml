@@ -38,6 +38,9 @@ Metrics/ClassLength:
 Gemspec/RequireMFA:
   Enabled: false
 
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
 Style/MixinUsage:
   Exclude:
   - "bin/console"

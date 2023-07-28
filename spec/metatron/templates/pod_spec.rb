@@ -2,7 +2,11 @@
 
 RSpec.describe Metatron::Templates::Pod do
   describe "for simple pods" do
-    let(:pod) { described_class.new("test") }
+    let(:pod) do
+      pod = described_class.new("test")
+      pod.containers << Metatron::Templates::Container.new("app")
+      pod
+    end
 
     let(:rendered_pod) do
       {
@@ -10,16 +14,11 @@ RSpec.describe Metatron::Templates::Pod do
         kind: "Pod",
         metadata: { labels: { "metatron.therubyist.org/name": "test" }, name: "test" },
         spec: {
-          terminationGracePeriodSeconds: 60,
           containers: [
             {
               image: "gcr.io/google_containers/pause",
               imagePullPolicy: "IfNotPresent",
               name: "app",
-              resources: {
-                limits: { cpu: "500m", memory: "512Mi" },
-                requests: { cpu: "10m", memory: "64Mi" }
-              },
               stdin: true,
               tty: true
             }
@@ -40,15 +39,23 @@ RSpec.describe Metatron::Templates::Pod do
   describe "for complex pods" do
     let(:pod) do
       pod = described_class.new("test")
-      pod.image = "some.registry/image:tag"
-      pod.image_pull_policy = "Always"
+
+      container = Metatron::Templates::Container.new("app")
+      container.image = "some.registry/image:tag"
+      container.image_pull_policy = "Always"
+      container.volume_mounts = [{ mountPath: "/tmp", name: "tmpvol" }]
+      container.env = { LOG_LEVEL: "DEBUG" }
+      container.ports = [{ name: "web", containerPort: 9090 }]
+      container.security_context = { readOnlyRootFilesystem: true }
+      container.resources = {
+        limits: { cpu: "500m", memory: "512Mi" },
+        requests: { cpu: "10m", memory: "64Mi" }
+      }
+
+      pod.containers << container
       pod.annotations = { "a.test/foo": "bar" }
       pod.security_context = { runAsUser: 1001, runAsGroup: 1001 }
       pod.volumes = [{ name: "tmpvol", emptyDir: {} }]
-      pod.volume_mounts = [{ mountPath: "/tmp", name: "tmpvol" }]
-      pod.env = { LOG_LEVEL: "DEBUG" }
-      pod.ports = [{ name: "web", containerPort: 9090 }]
-      pod.container_security_context = { readOnlyRootFilesystem: true }
       pod
     end
 
@@ -62,7 +69,6 @@ RSpec.describe Metatron::Templates::Pod do
           name: "test"
         },
         spec: {
-          terminationGracePeriodSeconds: 60,
           containers: [
             {
               env: [

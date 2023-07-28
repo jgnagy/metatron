@@ -4,6 +4,8 @@ module Metatron
   module Templates
     # Template for basic Namespace k8s resource
     class Namespace < Template
+      include Concerns::Annotated
+
       attr_accessor :additional_labels
 
       def initialize(name)
