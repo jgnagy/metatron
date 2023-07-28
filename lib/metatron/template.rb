@@ -18,7 +18,7 @@ module Metatron
       @name = name
       @label_namespace = self.class.label_namespace
       @api_version = "v1"
-      @kind = self.class.name.split("::").last
+      @kind = find_kind
       run_initializers
     end
 
@@ -37,6 +37,16 @@ module Metatron
 
     def run_initializers
       self.class.initializers.each { |initializer| send(initializer.to_sym) }
+    end
+
+    def find_kind
+      return self.class.name.split("::").last if metatron_template?
+
+      self.class.ancestors.find { |klass| metatron_template?(klass) }.name.split("::").last
+    end
+
+    def metatron_template?(klass = self)
+      klass.name.include?("Metatron::Templates") && !klass.name.include?("Concerns")
     end
   end
 end
