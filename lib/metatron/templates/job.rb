@@ -23,8 +23,6 @@ module Metatron
         @api_version = "batch/v1"
       end
 
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/MethodLength
       def render
         {
           apiVersion:,
@@ -40,23 +38,10 @@ module Metatron
             completions:,
             parallelism:,
             podFailurePolicy:,
-            ttlSecondsAfterFinished:,
-            template: {
-              spec: {
-                terminationGracePeriodSeconds:,
-                restartPolicy:,
-                containers: containers.map(&:render),
-                init_containers: init_containers.any? ? init_containers.map(&:render) : nil
-              }.merge(formatted_volumes)
-                .merge(formatted_security_context)
-                .merge(formatted_tolerations)
-                .compact
-            }.compact
-          }.compact
+            ttlSecondsAfterFinished:
+          }.merge(pod_template).compact
         }
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

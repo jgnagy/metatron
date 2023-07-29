@@ -14,7 +14,6 @@ RSpec.describe Metatron::Templates::StatefulSet do
         kind: "StatefulSet",
         metadata: { labels: { "metatron.therubyist.org/name": "test" }, name: "test" },
         spec: {
-          enableServiceLinks: true,
           replicas: 1,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test" } },
           serviceName: "test",
@@ -59,7 +58,15 @@ RSpec.describe Metatron::Templates::StatefulSet do
       }
 
       stateful_set.containers << container
+
+      init_container = Metatron::Templates::Container.new("init")
+      init_container.image = "some.registry/some/otherimage:tag"
+      init_container.env = { LOG_LEVEL: "DEBUG" }
+
+      stateful_set.init_containers << init_container
+
       stateful_set.namespace = "atestnamespace"
+      stateful_set.enable_service_links = false
       stateful_set.replicas = 5
       stateful_set.termination_grace_period_seconds = 10
       stateful_set.additional_pod_labels = { foo: "bar" }
@@ -81,7 +88,6 @@ RSpec.describe Metatron::Templates::StatefulSet do
           namespace: "atestnamespace"
         },
         spec: {
-          enableServiceLinks: true,
           replicas: 5,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test", foo: "bar" } },
           serviceName: "a-test",
@@ -103,7 +109,18 @@ RSpec.describe Metatron::Templates::StatefulSet do
                   envFrom: [{ secretRef: { name: "foo" } }]
                 }
               ],
-              terminationGracePeriodSeconds: 10
+              initContainers: [
+                {
+                  image: "some.registry/some/otherimage:tag",
+                  imagePullPolicy: "IfNotPresent",
+                  name: "init",
+                  stdin: true,
+                  tty: true,
+                  env: [{ name: :LOG_LEVEL, value: "DEBUG" }]
+                }
+              ],
+              terminationGracePeriodSeconds: 10,
+              enableServiceLinks: false
             }
           }
         },

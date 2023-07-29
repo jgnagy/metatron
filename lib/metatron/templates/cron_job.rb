@@ -10,19 +10,10 @@ module Metatron
 
       attr_accessor :schedule, :suspend, :concurrency_policy, :starting_deadline_seconds,
                     :successful_jobs_history_limit, :failed_jobs_history_limit,
-                    :automount_service_account_token, :backoff_limit, :active_deadline_seconds,
-                    :dns_policy, :restart_policy,
-                    :scheduler_name, :service_account, :service_account_name
+                    :backoff_limit
 
-      alias automountServiceAccountToken automount_service_account_token
       alias backoffLimit backoff_limit
-      alias activeDeadlineSeconds active_deadline_seconds
       alias concurrencyPolicy concurrency_policy
-      alias dnsPolicy dns_policy
-      alias restartPolicy restart_policy
-      alias schedulerName scheduler_name
-      alias serviceAccount service_account
-      alias serviceAccountName service_account_name
       alias startingDeadlineSeconds starting_deadline_seconds
       alias successfulJobsHistoryLimit successful_jobs_history_limit
       alias failedJobsHistoryLimit failed_jobs_history_limit
@@ -31,11 +22,9 @@ module Metatron
         super(name)
         @schedule = schedule
         @api_version = "batch/v1"
-        @restart_policy = "OnFailure"
       end
 
       # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/MethodLength
       def render
         {
           apiVersion:,
@@ -54,30 +43,13 @@ module Metatron
             jobTemplate: {
               spec: {
                 activeDeadlineSeconds:,
-                backoffLimit:,
-                template: {
-                  spec: {
-                    automountServiceAccountToken:,
-                    terminationGracePeriodSeconds:,
-                    dnsPolicy:,
-                    restartPolicy:,
-                    schedulerName:,
-                    serviceAccount:,
-                    serviceAccountName:,
-                    containers: containers.map(&:render),
-                    init_containers: init_containers.any? ? init_containers.map(&:render) : nil
-                  }.merge(formatted_volumes)
-                    .merge(formatted_security_context)
-                    .compact
-                }.compact
-              }.compact
-            }.merge(formatted_tolerations)
-              .compact
+                backoffLimit:
+              }.merge(pod_template).compact
+            }.merge(formatted_tolerations).compact
           }.compact
         }
       end
       # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end
