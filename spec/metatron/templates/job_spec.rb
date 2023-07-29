@@ -15,6 +15,7 @@ RSpec.describe Metatron::Templates::Job do
         metadata: { labels: { "metatron.therubyist.org/name": "hello" }, name: "hello" },
         spec: {
           template: {
+            metadata: { labels: { "metatron.therubyist.org/name": "hello" } },
             spec: {
               containers: [
                 {

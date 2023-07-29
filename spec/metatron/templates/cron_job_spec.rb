@@ -18,8 +18,8 @@ RSpec.describe Metatron::Templates::CronJob do
           jobTemplate: {
             spec: {
               template: {
+                metadata: { labels: { "metatron.therubyist.org/name": "hello" } },
                 spec: {
-                  restartPolicy: "OnFailure",
                   containers: [
                     {
                       image: "gcr.io/google_containers/pause",
@@ -77,8 +77,8 @@ RSpec.describe Metatron::Templates::CronJob do
           jobTemplate: {
             spec: {
               template: {
+                metadata: { labels: { "metatron.therubyist.org/name": "hello" } },
                 spec: {
-                  restartPolicy: "OnFailure",
                   containers: [
                     {
                       image: "gcr.io/google_containers/pause",
