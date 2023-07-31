@@ -33,7 +33,8 @@ module Metatron
           spec: {
             replicas:,
             serviceName:,
-            strategy: { type: "RollingUpdate", rollingUpdate: { maxSurge: 2, maxUnavailable: 0 } },
+            updateStrategy: { type: "RollingUpdate",
+                              rollingUpdate: { maxSurge: 2, maxUnavailable: 0 } },
             selector: {
               matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
             }

@@ -17,7 +17,10 @@ RSpec.describe Metatron::Templates::StatefulSet do
           replicas: 1,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test" } },
           serviceName: "test",
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
+          updateStrategy: {
+            rollingUpdate: { maxSurge: 2, maxUnavailable: 0 },
+            type: "RollingUpdate"
+          },
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test" } },
             spec: {
@@ -91,7 +94,10 @@ RSpec.describe Metatron::Templates::StatefulSet do
           replicas: 5,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test", foo: "bar" } },
           serviceName: "a-test",
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
+          updateStrategy: {
+            rollingUpdate: { maxSurge: 2, maxUnavailable: 0 },
+            type: "RollingUpdate"
+          },
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test", foo: "bar" } },
             spec: {
