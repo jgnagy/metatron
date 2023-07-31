@@ -23,7 +23,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             replicas:,
             strategy: { type: "RollingUpdate", rollingUpdate: { maxSurge: 2, maxUnavailable: 0 } },
