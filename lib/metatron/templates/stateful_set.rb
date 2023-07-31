@@ -8,7 +8,7 @@ module Metatron
       include Concerns::PodProducer
       include Concerns::Namespaced
 
-      attr_accessor :replicas, :service_name, :pod_management_policy
+      attr_accessor :replicas, :service_name, :pod_management_policy, :update_strategy
 
       def initialize(name, replicas: 1)
         super(name)
@@ -21,8 +21,10 @@ module Metatron
       alias enableServiceLinks enable_service_links
       alias podManagementPolicy pod_management_policy
       alias serviceName service_name
+      alias strategy update_strategy
+      alias updateStrategy update_strategy
 
-      def render
+      def render # rubocop:disable Metrics/AbcSize
         {
           apiVersion:,
           kind:,
@@ -33,12 +35,12 @@ module Metatron
           spec: {
             replicas:,
             serviceName:,
-            strategy: { type: "RollingUpdate", rollingUpdate: { maxSurge: 2, maxUnavailable: 0 } },
+            updateStrategy:,
             selector: {
               matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
             }
-          }.merge(pod_template)
-        }.merge(volume_claim_templates)
+          }.merge(pod_template).merge(volume_claim_templates).compact
+        }
       end
     end
   end

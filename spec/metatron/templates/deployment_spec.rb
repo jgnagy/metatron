@@ -19,7 +19,6 @@ RSpec.describe Metatron::Templates::Deployment do
         spec: {
           replicas: 2,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test" } },
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test" } },
             spec: {
@@ -77,6 +76,7 @@ RSpec.describe Metatron::Templates::Deployment do
       dep.containers << container
       dep.annotations = { "a.test/foo": "bar" }
       dep.additional_labels = { "app.kubernetes.io/part-of": "test-app" }
+      dep.namespace = "test-namespace"
       dep.replicas = 10
       dep.additional_pod_labels = { thing: "swamp" }
       dep.security_context = { runAsUser: 1000, runAsGroup: 1000 }
@@ -95,14 +95,14 @@ RSpec.describe Metatron::Templates::Deployment do
             "app.kubernetes.io/part-of": "test-app",
             "metatron.therubyist.org/name": "test"
           },
-          name: "test"
+          name: "test",
+          namespace: "test-namespace"
         },
         spec: {
           replicas: 10,
           selector: {
             matchLabels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
           },
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
           template: {
             metadata: {
               labels: { "metatron.therubyist.org/name": "test", thing: "swamp" }

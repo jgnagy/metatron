@@ -17,7 +17,6 @@ RSpec.describe Metatron::Templates::StatefulSet do
           replicas: 1,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test" } },
           serviceName: "test",
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test" } },
             spec: {
@@ -68,6 +67,9 @@ RSpec.describe Metatron::Templates::StatefulSet do
       stateful_set.namespace = "atestnamespace"
       stateful_set.enable_service_links = false
       stateful_set.replicas = 5
+      stateful_set.update_strategy = {
+        rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate"
+      }
       stateful_set.termination_grace_period_seconds = 10
       stateful_set.additional_pod_labels = { foo: "bar" }
       stateful_set.service_name = "a-test"
@@ -91,7 +93,8 @@ RSpec.describe Metatron::Templates::StatefulSet do
           replicas: 5,
           selector: { matchLabels: { "metatron.therubyist.org/name": "test", foo: "bar" } },
           serviceName: "a-test",
-          strategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate" },
+          updateStrategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 },
+                            type: "RollingUpdate" },
           template: {
             metadata: { labels: { "metatron.therubyist.org/name": "test", foo: "bar" } },
             spec: {
@@ -122,27 +125,27 @@ RSpec.describe Metatron::Templates::StatefulSet do
               terminationGracePeriodSeconds: 10,
               enableServiceLinks: false
             }
-          }
-        },
-        volumeClaimTemplates: [
-          {
-            apiVersion: "v1",
-            kind: "PersistentVolumeClaim",
-            metadata: {
-              name: "test",
-              labels: { "metatron.therubyist.org/name": "test" }
-            },
-            spec: {
-              accessModes: ["ReadWriteOnce"],
-              storageClassName: "test",
-              resources: {
-                requests: {
-                  storage: "1Gi"
+          },
+          volumeClaimTemplates: [
+            {
+              apiVersion: "v1",
+              kind: "PersistentVolumeClaim",
+              metadata: {
+                name: "test",
+                labels: { "metatron.therubyist.org/name": "test" }
+              },
+              spec: {
+                accessModes: ["ReadWriteOnce"],
+                storageClassName: "test",
+                resources: {
+                  requests: {
+                    storage: "1Gi"
+                  }
                 }
               }
             }
-          }
-        ]
+          ]
+        }
       }
     end
 

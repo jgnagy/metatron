@@ -8,7 +8,7 @@ module Metatron
       include Concerns::Namespaced
       include Concerns::PodProducer
 
-      attr_accessor :replicas, :additional_labels
+      attr_accessor :replicas, :additional_labels, :strategy
 
       def initialize(name, replicas: 2)
         super(name)
@@ -23,14 +23,14 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations),
+          }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             replicas:,
-            strategy: { type: "RollingUpdate", rollingUpdate: { maxSurge: 2, maxUnavailable: 0 } },
+            strategy:,
             selector: {
               matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
             }
-          }.merge(pod_template)
+          }.merge(pod_template).compact
         }
       end
     end
