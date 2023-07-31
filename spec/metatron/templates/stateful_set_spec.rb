@@ -128,27 +128,27 @@ RSpec.describe Metatron::Templates::StatefulSet do
               terminationGracePeriodSeconds: 10,
               enableServiceLinks: false
             }
-          }
-        },
-        volumeClaimTemplates: [
-          {
-            apiVersion: "v1",
-            kind: "PersistentVolumeClaim",
-            metadata: {
-              name: "test",
-              labels: { "metatron.therubyist.org/name": "test" }
-            },
-            spec: {
-              accessModes: ["ReadWriteOnce"],
-              storageClassName: "test",
-              resources: {
-                requests: {
-                  storage: "1Gi"
+          },
+          volumeClaimTemplates: [
+            {
+              apiVersion: "v1",
+              kind: "PersistentVolumeClaim",
+              metadata: {
+                name: "test",
+                labels: { "metatron.therubyist.org/name": "test" }
+              },
+              spec: {
+                accessModes: ["ReadWriteOnce"],
+                storageClassName: "test",
+                resources: {
+                  requests: {
+                    storage: "1Gi"
+                  }
                 }
               }
             }
-          }
-        ]
+          ]
+        }
       }
     end
 

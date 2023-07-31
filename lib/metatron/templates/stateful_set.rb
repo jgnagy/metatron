@@ -38,8 +38,8 @@ module Metatron
             selector: {
               matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
             }
-          }.merge(pod_template)
-        }.merge(volume_claim_templates)
+          }.merge(pod_template).merge(volume_claim_templates)
+        }
       end
     end
   end
