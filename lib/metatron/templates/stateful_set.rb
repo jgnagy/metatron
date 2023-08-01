@@ -22,6 +22,7 @@ module Metatron
       alias podManagementPolicy pod_management_policy
       alias serviceName service_name
       alias strategy update_strategy
+      alias strategy= update_strategy=
       alias updateStrategy update_strategy
 
       def render # rubocop:disable Metrics/AbcSize

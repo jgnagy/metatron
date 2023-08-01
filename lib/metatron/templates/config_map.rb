@@ -7,13 +7,15 @@ module Metatron
       include Concerns::Annotated
       include Concerns::Namespaced
 
-      attr_accessor :additional_labels, :type, :data
+      attr_accessor :additional_labels, :immutable, :data
 
       def initialize(name, data = {})
         super(name)
         @data = data
         @additional_labels = {}
       end
+
+      def immutable? = !!@immutable
 
       def render
         {
@@ -22,9 +24,10 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations).merge(formatted_namespace),
-          data:
-        }
+          }.merge(formatted_annotations).merge(formatted_namespace).compact,
+          data:,
+          immutable:
+        }.compact
       end
     end
   end

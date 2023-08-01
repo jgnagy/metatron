@@ -42,7 +42,6 @@ module Metatron
             failedJobsHistoryLimit:,
             jobTemplate: {
               spec: {
-                activeDeadlineSeconds:,
                 backoffLimit:
               }.merge(pod_template).compact
             }.merge(formatted_tolerations).compact
