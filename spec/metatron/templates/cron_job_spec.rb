@@ -56,9 +56,16 @@ RSpec.describe Metatron::Templates::CronJob do
         requests: { cpu: "10m", memory: "64Mi" }
       }
       cron_job.containers << container
+      cron_job.active_deadline_seconds = 10
       cron_job.annotations = { "a.test/foo": "bar" }
+      cron_job.additional_labels[:foo] = "bar"
+      cron_job.backoff_limit = 5
       cron_job.concurrency_policy = "Forbid"
+      cron_job.failed_jobs_history_limit = 7
+      cron_job.namespace = "testnamespace"
+      cron_job.starting_deadline_seconds = 10
       cron_job.successful_jobs_history_limit = 5
+      cron_job.suspend = false
       cron_job
     end
 
@@ -68,17 +75,24 @@ RSpec.describe Metatron::Templates::CronJob do
         kind: "CronJob",
         metadata: {
           annotations: { "a.test/foo": "bar" },
-          labels: { "metatron.therubyist.org/name": "hello" }, name: "hello"
+          labels: { "metatron.therubyist.org/name": "hello", foo: "bar" },
+          name: "hello",
+          namespace: "testnamespace"
         },
         spec: {
           concurrencyPolicy: "Forbid",
           schedule: "*/5 * * * *",
           successfulJobsHistoryLimit: 5,
+          failedJobsHistoryLimit: 7,
+          startingDeadlineSeconds: 10,
+          suspend: false,
           jobTemplate: {
             spec: {
+              backoffLimit: 5,
               template: {
                 metadata: { labels: { "metatron.therubyist.org/name": "hello" } },
                 spec: {
+                  activeDeadlineSeconds: 10,
                   containers: [
                     {
                       image: "gcr.io/google_containers/pause",

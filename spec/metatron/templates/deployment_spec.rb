@@ -74,10 +74,18 @@ RSpec.describe Metatron::Templates::Deployment do
       }
 
       dep.containers << container
+
+      init_container = Metatron::Templates::Container.new("init")
+      init_container.image = "some.registry/some/otherimage:tag"
+      init_container.env = { LOG_LEVEL: "DEBUG" }
+
+      dep.init_containers << init_container
+
       dep.annotations = { "a.test/foo": "bar" }
       dep.additional_labels = { "app.kubernetes.io/part-of": "test-app" }
       dep.namespace = "test-namespace"
       dep.replicas = 10
+      dep.strategy = { type: "RollingUpdate", rollingUpdate: { maxSurge: 1, maxUnavailable: 0 } }
       dep.additional_pod_labels = { thing: "swamp" }
       dep.security_context = { runAsUser: 1000, runAsGroup: 1000 }
       dep.volumes = [{ name: "tmpvol", emptyDir: {} }]
@@ -100,6 +108,7 @@ RSpec.describe Metatron::Templates::Deployment do
         },
         spec: {
           replicas: 10,
+          strategy: { type: "RollingUpdate", rollingUpdate: { maxSurge: 1, maxUnavailable: 0 } },
           selector: {
             matchLabels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
           },
@@ -136,6 +145,16 @@ RSpec.describe Metatron::Templates::Deployment do
                   stdin: true,
                   tty: true,
                   volumeMounts: [{ mountPath: "/tmp", name: "tmpvol" }]
+                }
+              ],
+              initContainers: [
+                {
+                  image: "some.registry/some/otherimage:tag",
+                  imagePullPolicy: "IfNotPresent",
+                  name: "init",
+                  stdin: true,
+                  tty: true,
+                  env: [{ name: :LOG_LEVEL, value: "DEBUG" }]
                 }
               ],
               securityContext: { runAsGroup: 1000, runAsUser: 1000 },
