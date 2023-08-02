@@ -5,7 +5,7 @@ module Metatron
     # Template for containers used by k8s resources (not an actual resource)
     class Container
       attr_accessor :name, :image, :command, :args, :env, :envfrom, :resources, :volume_mounts,
-                    :image_pull_policy, :life_cycle, :probes, :security_context, :ports,
+                    :image_pull_policy, :lifecycle, :probes, :security_context, :ports,
                     :stdin, :tty
 
       alias imagePullPolicy image_pull_policy
@@ -23,15 +23,16 @@ module Metatron
         @resources = {}
         @volume_mounts = []
         @image_pull_policy = "IfNotPresent"
-        @life_cycle = {}
+        @lifecycle = {}
         @probes = {}
         @stdin = true
         @tty = true
       end
 
-      def render
+      def render # rubocop:disable Metrics/AbcSize
         {
           name:,
+          command:,
           image:,
           imagePullPolicy:,
           stdin:,
@@ -43,7 +44,21 @@ module Metatron
           .merge(formatted_ports)
           .merge(formatted_volume_mounts)
           .merge(formatted_security_context)
+          .merge(formatted_args)
+          .merge(formatted_lifecycle)
           .compact
+      end
+
+      def formatted_args
+        return {} unless args && !args.empty?
+
+        { args: }
+      end
+
+      def formatted_lifecycle
+        return {} unless lifecycle && !lifecycle.empty?
+
+        { lifecycle: }
       end
 
       def formatted_environment # rubocop:disable Metrics/PerceivedComplexity
