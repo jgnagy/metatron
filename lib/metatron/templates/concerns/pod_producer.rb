@@ -8,7 +8,7 @@ module Metatron
         def self.included(base) # rubocop:disable Metrics/MethodLength
           # base.extend ClassMethods
           base.class_eval do
-            attr_accessor :active_deadline_seconds, :additional_labels, :additional_pod_labels,
+            attr_accessor :active_deadline_seconds, :additional_pod_labels,
                           :affinity, :automount_service_account_token, :containers,
                           :dns_policy, :enable_service_links, :hostname, :host_ipc, :host_network,
                           :host_pid, :image_pull_secrets, :init_containers, :node_selector,
@@ -39,7 +39,6 @@ module Metatron
         end
 
         def pod_producer_initialize
-          @additional_labels = {}
           @additional_pod_labels = {}
           @affinity = {}
           @containers = []

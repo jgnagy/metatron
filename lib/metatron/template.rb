@@ -3,7 +3,7 @@
 module Metatron
   # Base class for templating Kubernetes resources
   class Template
-    attr_accessor :api_version, :name
+    attr_accessor :api_version, :name, :additional_labels
     attr_reader :kind, :label_namespace
 
     class << self
@@ -19,6 +19,7 @@ module Metatron
       @label_namespace = self.class.label_namespace
       @api_version = "v1"
       @kind = find_kind
+      @additional_labels = {}
       run_initializers
     end
 
