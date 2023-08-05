@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    metatron (0.2.7)
+    metatron (0.2.8)
       json (~> 2.6)
       puma (~> 6.3)
       sinatra (~> 2.2)

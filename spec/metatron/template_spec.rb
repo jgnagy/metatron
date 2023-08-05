@@ -4,7 +4,7 @@ require "metatron"
 
 RSpec.describe Metatron::Template do
   describe "for basic template behaviours" do
-    it "uses the classe's name if it is a template" do
+    it "uses the class name if it is a template" do
       actual_kind = Metatron::Templates::ConfigMap.new("test").render[:kind]
       expect(actual_kind).to eq("ConfigMap")
     end
