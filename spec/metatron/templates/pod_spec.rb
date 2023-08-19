@@ -54,6 +54,17 @@ RSpec.describe Metatron::Templates::Pod do
 
       pod.containers << container
       pod.annotations = { "a.test/foo": "bar" }
+      pod.affinity = {
+        nodeAffinity: {
+          requiredDuringSchedulingIgnoredDuringExecution: {
+            nodeSelectorTerms: [
+              {
+                matchExpressions: [{ key: "disktype", operator: "In", values: ["ssd"] }]
+              }
+            ]
+          }
+        }
+      }
       pod.security_context = { runAsUser: 1001, runAsGroup: 1001 }
       pod.volumes = [{ name: "tmpvol", emptyDir: {} }]
       pod
@@ -69,6 +80,17 @@ RSpec.describe Metatron::Templates::Pod do
           name: "test"
         },
         spec: {
+          affinity: {
+            nodeAffinity: {
+              requiredDuringSchedulingIgnoredDuringExecution: {
+                nodeSelectorTerms: [
+                  {
+                    matchExpressions: [{ key: "disktype", operator: "In", values: ["ssd"] }]
+                  }
+                ]
+              }
+            }
+          },
           containers: [
             {
               env: [
