@@ -34,20 +34,25 @@ module Metatron
       @initializers ||= []
     end
 
+    def self.nearest_metatron_ancestor
+      return self if metatron_template_class?
+
+      ancestors.find { _1.respond_to?(:metatron_template_class?) && _1.metatron_template_class? }
+    end
+
+    def self.metatron_template_class?
+      return true if name == "Metatron::Template"
+      return false if name.start_with?("Metatron::Templates::Concerns")
+
+      name.start_with?("Metatron::Templates::")
+    end
+
     private
 
     def run_initializers
-      self.class.initializers.each { |initializer| send(initializer.to_sym) }
+      self.class.nearest_metatron_ancestor.initializers.each { send(_1.to_sym) }
     end
 
-    def find_kind
-      return self.class.name.split("::").last if metatron_template?
-
-      self.class.ancestors.find { |klass| metatron_template?(klass) }.name.split("::").last
-    end
-
-    def metatron_template?(klass = self)
-      klass.name.include?("Metatron::Templates") && !klass.name.include?("Concerns")
-    end
+    def find_kind = self.class.nearest_metatron_ancestor.name.split("::").last
   end
 end
