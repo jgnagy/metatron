@@ -18,6 +18,11 @@ RSpec.describe Metatron::Template do
       actual_kind = FakeConfigMapWithInclude.new("test", { "foo" => "bar" }).render[:kind]
       expect(actual_kind).to eq("ConfigMap")
     end
+
+    it "includes initializers from the nearest ancestor" do
+      thing = FakeConfigMap.new("test", { "foo" => "bar" })
+      expect(thing.annotations).to eq({}) # this is set by Concerns::Annotated#annotated_initialize
+    end
   end
 end
 
