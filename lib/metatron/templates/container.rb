@@ -42,7 +42,7 @@ module Metatron
           stdin:,
           tty:,
           terminationMessagePath:,
-          terminationMessagePolicy:,
+          terminationMessagePolicy:
         }.merge(probes)
           .merge(formatted_resources)
           .merge(formatted_environment)
