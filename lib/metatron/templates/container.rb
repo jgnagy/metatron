@@ -6,13 +6,15 @@ module Metatron
     class Container
       attr_accessor :name, :image, :command, :args, :env, :envfrom, :resources, :volume_mounts,
                     :image_pull_policy, :lifecycle, :probes, :security_context, :ports,
-                    :stdin, :tty
+                    :stdin, :tty, :termination_message_path, :termination_message_policy
 
       alias imagePullPolicy image_pull_policy
       alias volumeMounts volume_mounts
       alias securityContext security_context
       alias environment env
       alias envFrom envfrom
+      alias terminationMessagePath termination_message_path
+      alias terminationMessagePolicy termination_message_policy
 
       def initialize(name, image = "gcr.io/google_containers/pause")
         @name = name
@@ -27,6 +29,8 @@ module Metatron
         @probes = {}
         @stdin = true
         @tty = true
+        @termination_message_path = nil
+        @termination_message_policy = nil
       end
 
       def render # rubocop:disable Metrics/AbcSize
@@ -36,7 +40,9 @@ module Metatron
           image:,
           imagePullPolicy:,
           stdin:,
-          tty:
+          tty:,
+          terminationMessagePath:,
+          terminationMessagePolicy:,
         }.merge(probes)
           .merge(formatted_resources)
           .merge(formatted_environment)
