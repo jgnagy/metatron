@@ -2,13 +2,12 @@
 
 module Metatron
   module Templates
-    # Template for basic ClusterRole k8s resource
-    class ClusterRole < Template
+    # Template for basic Role k8s resource
+    class Role < Template
       include Concerns::Annotated
+      include Concerns::Namespaced
 
-      attr_accessor :rules, :aggregation_rule
-
-      alias aggregationRule aggregation_rule
+      attr_accessor :rules
 
       def initialize(name)
         super(name)
@@ -23,8 +22,7 @@ module Metatron
           metadata: {
             name:,
             labels: { "#{label_namespace}/name": name }.merge(additional_labels)
-          }.merge(formatted_annotations).compact,
-          aggregationRule:,
+          }.merge(formatted_annotations).merge(formatted_namespace).compact,
           rules: formatted_rules
         }.compact
       end
