@@ -8,7 +8,7 @@ module Metatron
     configure do
       set :protection, except: :http_origin
       set :logging, true
-      set :logger, Metatron::LOGGER
+      set :logger, Metatron.logger
       set :show_exceptions, false
     end
 
