@@ -3,7 +3,6 @@ PATH
   specs:
     metatron (0.4.2)
       json (~> 2.6)
-      puma (~> 6.3)
       sinatra (~> 3.1)
       sinatra-contrib (~> 3.1)
 
@@ -27,7 +26,6 @@ GEM
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    nio4r (2.6.0)
     nokogiri (1.15.4-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.15.4-x86_64-linux)
@@ -36,8 +34,6 @@ GEM
     parser (3.2.2.4)
       ast (~> 2.4.1)
       racc
-    puma (6.4.0)
-      nio4r (~> 2.0)
     racc (1.7.3)
     rack (2.2.8)
     rack-protection (3.1.0)
