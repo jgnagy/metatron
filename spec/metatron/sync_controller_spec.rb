@@ -77,7 +77,7 @@ RSpec.describe Metatron::SyncController do
       expect(last_response.headers).to include("ETag" => "\"abcd1234\"")
     end
 
-    it "returns a 304 for standard sync requests with ETag headers" do # rubocop:disable RSpec/ExampleLength
+    it "returns a 412 for standard sync requests with ETag headers" do # rubocop:disable RSpec/ExampleLength
       post(
         "/",
         {},
@@ -87,7 +87,7 @@ RSpec.describe Metatron::SyncController do
           "CONTENT_TYPE" => "application/json"
         }
       )
-      expect(last_response.status).to eq(304)
+      expect(last_response.status).to eq(412)
     end
 
     it "does not provide a body for standard sync requests with ETag headers" do # rubocop:disable RSpec/ExampleLength
