@@ -6,7 +6,7 @@ module Metatron
     class Ping < Sinatra::Application
       configure do
         set :logging, true
-        set :logger, Metatron::LOGGER
+        set :logger, Metatron.logger
       end
 
       before do

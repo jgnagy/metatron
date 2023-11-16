@@ -16,10 +16,8 @@ module Metatron
   class Error < StandardError; end
   class ConfigError < Error; end
 
-  LOGGER = Logger.new($stdout)
-
-  # Set up log level
-  LOGGER.level = ENV.fetch("LOG_LEVEL", :warn)
+  singleton_class.attr_accessor :logger
+  self.logger = Logger.new($stdout, level: ENV.fetch("LOG_LEVEL", :warn))
 end
 
 # Internal requirements
@@ -50,3 +48,4 @@ require "metatron/templates/stateful_set"
 require "metatron/controller"
 require "metatron/sync_controller"
 require "metatron/controllers/ping"
+require "metatron/railtie" if defined? Rails::Railtie
