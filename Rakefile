@@ -18,7 +18,7 @@ end
 
 desc "automatically bump the gem's version"
 task :bump, [:type] do |_t, args|
-  type = args[:type] || "patch"
+  type = args[:type] || ENV["TYPE"] || "patch"
   current_version = Metatron::VERSION
   new_version = calculate_new_version(type)
   puts "Bumping gem version from #{current_version} to #{new_version}"
@@ -29,9 +29,18 @@ task default: %i[spec rubocop yard]
 
 def calculate_new_version(type)
   version = Metatron::VERSION.split(".").map(&:to_i)
-  version[2] += 1 if type == "patch"
-  version[1] += 1 if type == "minor"
-  version[0] += 1 if type == "major"
+  case type
+  when "patch"
+    version[2] += 1
+  when "minor"
+    version[1] += 1
+    version[2] = 0
+  when "major"
+    version[0] += 1
+    version[1] = 0
+    version[2] = 0
+  end
+
   version.join(".")
 end
 
