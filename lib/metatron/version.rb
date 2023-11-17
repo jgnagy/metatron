@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
 module Metatron
-  VERSION = [
-    0, # major
-    4, # minor
-    2  # patch
-  ].join(".")
+  VERSION = "0.4.2"
 end
