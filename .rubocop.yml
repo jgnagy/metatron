@@ -56,3 +56,6 @@ Style/StringLiteralsInInterpolation:
 Style/StringConcatenation:
   Exclude:
   - 'Rakefile'
+
+RSpec/ExampleLength:
+  Max: 10
