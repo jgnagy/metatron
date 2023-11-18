@@ -120,7 +120,8 @@ As Metatron is a tool for creating Ruby projects, you'll need a few prerequistes
 $ git init blog_controller && cd blog_controller
 ```
 
-We'll need a `Gemfile` to ensure we have Metatron installed:
+We'll need a `Gemfile` to ensure we have installed both Metatron and a
+[`rack`][] compatible server:
 
 ```ruby
 # frozen_string_literal: true
@@ -128,9 +129,12 @@ We'll need a `Gemfile` to ensure we have Metatron installed:
 source "https://rubygems.org"
 
 gem "metatron"
+gem "puma"
 ```
 
-We'll also need a `config.ru` file to instruct [`rack`](https://github.com/rack/rack) how to route requests:
+[`rack`]: https://github.com/rack/rack
+
+We'll also need a `config.ru` file to instruct [`rack`][] how to route requests:
 
 ```ruby
 # frozen_string_literal: true
