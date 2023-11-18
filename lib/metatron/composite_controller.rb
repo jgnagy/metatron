@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 module Metatron
-  # Used for "normal" sync requests
-  class SyncController < Controller
-    options "/" do
+  # Implementes a Metacontroller CompositeController
+  # @see https://metacontroller.github.io/metacontroller/api/compositecontroller.html
+  class CompositeController < Controller
+    options "/sync" do
       headers "Access-Control-Allow-Methods" => ["POST"]
       halt 200
     end
 
-    post "/" do
+    post "/sync" do
       if (provided_etag = calculate_etag)
         etag provided_etag
       end

@@ -46,6 +46,6 @@ require "metatron/templates/service"
 require "metatron/templates/service_account"
 require "metatron/templates/stateful_set"
 require "metatron/controller"
-require "metatron/sync_controller"
+require "metatron/composite_controller"
 require "metatron/controllers/ping"
 require "metatron/railtie" if defined? Rails::Railtie

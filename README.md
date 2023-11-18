@@ -2,9 +2,9 @@
 
 Metatron is a Ruby library for creating [Metacontroller](https://metacontroller.github.io/metacontroller/)-based custom Kubernetes controllers.
 
-The intention is to make it as easy as possible to use Ruby to manage [custom resources](https://kubernetes.io/docs/concepts/api-extension/custom-resources/) within your Kubernetes infrastructure. No Golang required to listen for and respond to resources based on your own [CustomResourceDefinition](https://kubernetes.io/docs/tasks/access-kubernetes-api/extend-api-custom-resource-definitions/) or to modify existing kubernetes resources via a [DecoratorController](https://metacontroller.github.io/metacontroller/api/decoratorcontroller.html).
+The intention is to make it as easy as possible to use Ruby to manage [custom resources](https://kubernetes.io/docs/concepts/api-extension/custom-resources/) within your Kubernetes infrastructure. No Golang required!
 
-Your Ruby code doesn't have to have any _real_ knowledge of the Kubernetes environment in which it operates; Metacontroller takes care of all the Kubernetes interactions and Metatron handles providing the JSON interface. Just write a `sync` method that can receive and respond with the appropriate Hashes and you're on your way!
+For more information, see the [Metatron Wiki on GitHub](https://github.com/jgnagy/metatron/wiki)!
 
 ## Usage
 
@@ -107,7 +107,7 @@ spec:
           namespace: blog-controller
           port: 9292
           protocol: http
-        path: /sync
+        path: /blogs/sync
 ```
 
 Before applying the above though, we'll need to actually create a service that can response to sync requests. That's where Metatron comes in!
@@ -138,7 +138,7 @@ We'll also need a `config.ru` file to instruct [`rack`](https://github.com/rack/
 # \ -s puma
 
 require "metatron"
-require_relative "./lib/blog_controller/sync"
+require_relative "./lib/blog_controller/composite_controller"
 
 use Rack::ShowExceptions
 use Rack::Deflater
@@ -147,7 +147,7 @@ mappings = {
   # This one is built-in to Metatron and is useful for monitoring
   "/ping" => Metatron::Controllers::Ping.new,
   # We'll need to make this one
-  "/sync" => BlogController::Sync.new
+  "/blogs" => BlogController::CompositeController.new
 }
 
 run Rack::URLMap.new(mappings)
@@ -177,13 +177,13 @@ ENTRYPOINT ["bundle", "exec"]
 CMD ["puma"]
 ```
 
-*Phew*, ok, with all that out of the way, we can get started with our development. We'll need to create a `Metatron::SyncController` subclass with a `sync` method. We'll put this in `lib/blog_controller/sync.rb`:
+*Phew*, ok, with all that out of the way, we can get started with our development. We'll need to create a `Metatron::CompositeController` subclass with a `sync` method. We'll put this in `lib/blog_controller/composite_controller.rb`:
 
 ```ruby
 # frozen_string_literal: true
 
 module BlogController
-  class Sync < Metatron::SyncController
+  class CompositeController < Metatron::CompositeController
     # This method needs to return a Hash which will be converted to JSON
     # It should have the keys "status" (a Hash) and "children" (an Array)
     def sync
@@ -326,7 +326,7 @@ Try POSTing a request via `curl` and inspecting the JSON response to see what yo
 $ curl \
   -H "Content-Type: application/json" \
   --data '{"parent": {"metadata": {"name": "foo"}, "spec": {"replicas": 1, "image": "nginx:latest"}}}' \
-  http://localhost:9292/sync
+  http://localhost:9292/blogs/sync
 ```
 
 Once we've confirmed this works, we'll need to publish our image somewhere and run it. Make sure you update the Service details in `blog-controller.yaml` to reflect its actual location.
