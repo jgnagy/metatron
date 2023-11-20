@@ -4,6 +4,8 @@ module Metatron
   module Controllers
     # Healthcheck service
     class Ping < Sinatra::Application
+      RESPONSE = { status: "up" }.to_json
+
       configure do
         set :logging, true
         set :logger, Metatron.logger
@@ -25,7 +27,7 @@ module Metatron
       end
 
       get "/" do
-        '{ "status": "up" }'
+        RESPONSE
       end
 
       options "/" do
