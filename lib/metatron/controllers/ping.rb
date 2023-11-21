@@ -3,33 +3,26 @@
 module Metatron
   module Controllers
     # Healthcheck service
-    class Ping < Sinatra::Application
-      configure do
-        set :logging, true
-        set :logger, Metatron.logger
+    class Ping
+      RESPONSE = { status: "up" }.to_json
+
+      def call(env)
+        req = Rack::Request.new(env)
+
+        return access_control_allow_methods if req.options?
+        return [403, { Rack::CONTENT_TYPE => "application/json" }, []] unless req.get?
+
+        Rack::Response[200, {
+          "content-type" => "application/json",
+          "x-frame-options" => "SAMEORIGIN",
+          "x-xss-protection" => "1; mode=block"
+        }, [RESPONSE]].to_a
       end
 
-      before do
-        content_type "application/json"
+      private
 
-        halt 403 unless request.get? || request.options?
-
-        if request.get?
-          headers "X-Frame-Options" => "SAMEORIGIN"
-          headers "X-XSS-Protection" => "1; mode=block"
-        end
-      end
-
-      after do
-        headers "Access-Control-Allow-Methods" => %w[GET] if request.options?
-      end
-
-      get "/" do
-        '{ "status": "up" }'
-      end
-
-      options "/" do
-        halt 200
+      def access_control_allow_methods
+        Rack::Response[200, { "access-control-allow-methods" => %w[GET] }, []].to_a
       end
     end
   end
