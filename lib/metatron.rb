@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 
 # Standard Library requirements
-require "base64"
 require "resolv"
 require "securerandom"
 require "time"
 require "logger"
-
-# External requirements
-require "sinatra/base"
-require "sinatra/custom_logger"
 
 # The top-level module for Metatron
 module Metatron
