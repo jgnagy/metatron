@@ -9,7 +9,7 @@ module Metatron
       end
     end
 
-    attr_accessor :request_body
+    attr_accessor :params
 
     def initialize(env)
       @env = env
@@ -22,7 +22,7 @@ module Metatron
           body = request.body.read
           request.body.rewind if request.body.respond_to?(:rewind)
 
-          self.request_body = JSON.parse(body) unless body.empty?
+          self.params = JSON.parse(body) unless body.empty?
         end
       rescue JSON::ParserError => e
         return [400, {}, [{ error: "Request must be JSON: #{e.message}" }.to_json]]
