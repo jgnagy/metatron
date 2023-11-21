@@ -20,7 +20,7 @@ RSpec.describe Metatron::CompositeController do
   include Rack::Test::Methods
 
   context "when ETag support is NOT enabled" do
-    def app = TestController
+    let(:app) { Rack::Lint.new(TestController) }
 
     it "returns a 200 OK for initial sync requests" do
       post "/sync", {}, "HTTP_ACCEPT" => "application/json", "Content-Type" => "application/json"
@@ -34,7 +34,7 @@ RSpec.describe Metatron::CompositeController do
 
     it "does not provide an ETag header for initial sync requests" do
       post "/sync", {}, "HTTP_ACCEPT" => "application/json", "Content-Type" => "application/json"
-      expect(last_response.headers.keys).not_to include("ETag")
+      expect(last_response.headers.key?("etag")).to be(false)
     end
 
     it "returns a 200 for standard sync requests" do
@@ -120,7 +120,7 @@ RSpec.describe Metatron::CompositeController do
           "Content-Type" => "application/json"
         }
       )
-      expect(last_response.headers.keys).not_to include("ETag")
+      expect(last_response.headers.key?("etag")).to be(false)
     end
 
     it "returns a 200 for standard customize requests" do
@@ -151,7 +151,7 @@ RSpec.describe Metatron::CompositeController do
   end
 
   context "when ETag support is enabled" do
-    def app = TestControllerWithEtags
+    let(:app) { Rack::Lint.new(TestControllerWithEtags) }
 
     it "returns a 200 OK for initial sync requests" do
       post "/sync", {}, "HTTP_ACCEPT" => "application/json", "Content-Type" => "application/json"
@@ -165,7 +165,7 @@ RSpec.describe Metatron::CompositeController do
 
     it "returns the expected ETag header for initial sync requests" do
       post "/sync", {}, "HTTP_ACCEPT" => "application/json", "Content-Type" => "application/json"
-      expect(last_response.headers).to include("ETag" => "\"abcd1234\"")
+      expect(last_response.headers["etag"]).to eq("\"abcd1234\"")
     end
 
     it "returns a 412 for standard sync requests with ETag headers" do
@@ -227,7 +227,7 @@ RSpec.describe Metatron::CompositeController do
           "Content-Type" => "application/json"
         }
       )
-      expect(last_response.headers).to include("ETag" => "\"efgh5678\"")
+      expect(last_response.headers["etag"]).to eq("\"efgh5678\"")
     end
 
     it "returns a 412 for standard customize requests with ETag headers" do
