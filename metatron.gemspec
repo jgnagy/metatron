@@ -26,9 +26,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = "~> 3.1"
 
-  spec.add_runtime_dependency "json",                 "~> 2.6"
-  spec.add_runtime_dependency "sinatra",              "~> 3.1"
-  spec.add_runtime_dependency "sinatra-contrib",      "~> 3.1"
+  spec.add_runtime_dependency "json", "~> 2.6"
+  spec.add_runtime_dependency "rack", ">= 2.2.8", "< 4"
 
   spec.add_development_dependency "bundler",             "~> 2.3"
   spec.add_development_dependency "byebug",              "~> 11"

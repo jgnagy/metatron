@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rack"
 require "rack/test"
 
 RSpec.describe Metatron::Controllers::Ping do
