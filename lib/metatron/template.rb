@@ -12,6 +12,28 @@ module Metatron
       def label_namespace
         @label_namespace ||= "metatron.therubyist.org"
       end
+
+      def initializer(*args)
+        @initializers ||= []
+        @initializers += args
+      end
+
+      def initializers
+        @initializers ||= []
+      end
+
+      def nearest_metatron_ancestor
+        return self if metatron_template_class?
+
+        ancestors.find { _1.respond_to?(:metatron_template_class?) && _1.metatron_template_class? }
+      end
+
+      def metatron_template_class?
+        return true if name == "Metatron::Template"
+        return false if name.start_with?("Metatron::Templates::Concerns")
+
+        name.start_with?("Metatron::Templates::")
+      end
     end
 
     def initialize(name)
@@ -25,27 +47,7 @@ module Metatron
 
     alias apiVersion api_version
 
-    def self.initializer(*args)
-      @initializers ||= []
-      @initializers += args
-    end
-
-    def self.initializers
-      @initializers ||= []
-    end
-
-    def self.nearest_metatron_ancestor
-      return self if metatron_template_class?
-
-      ancestors.find { _1.respond_to?(:metatron_template_class?) && _1.metatron_template_class? }
-    end
-
-    def self.metatron_template_class?
-      return true if name == "Metatron::Template"
-      return false if name.start_with?("Metatron::Templates::Concerns")
-
-      name.start_with?("Metatron::Templates::")
-    end
+    def base_labels = { "#{label_namespace}/name": name }
 
     private
 

@@ -13,7 +13,7 @@ module Metatron
       def initialize(name, port = nil)
         super(name)
         @type = "ClusterIP"
-        @selector = { "#{label_namespace}/name": name }
+        @selector = base_labels
         @additional_labels = {}
         @additional_selector_labels = {}
         @publish_not_ready_addresses = false
@@ -41,7 +41,7 @@ module Metatron
           kind:,
           metadata: {
             name:,
-            labels: { "#{label_namespace}/name": name }.merge(additional_labels)
+            labels: base_labels.merge(additional_labels)
           }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             type:,

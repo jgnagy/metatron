@@ -104,7 +104,7 @@ module Metatron
         def pod_metadata
           {
             metadata: {
-              labels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
+              labels: base_labels.merge(additional_pod_labels)
             }.merge(formatted_pod_annotations)
           }
         end

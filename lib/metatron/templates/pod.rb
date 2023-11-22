@@ -13,7 +13,7 @@ module Metatron
           apiVersion:,
           kind:,
           metadata: {
-            labels: { "#{label_namespace}/name": name }.merge(additional_labels),
+            labels: base_labels.merge(additional_labels),
             name:
           }.merge(formatted_annotations).merge(formatted_namespace)
         }.merge(pod_spec)

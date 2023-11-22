@@ -18,7 +18,7 @@ module Metatron
           automountServiceAccountToken:,
           metadata: {
             name:,
-            labels: { "#{label_namespace}/name": name }.merge(additional_labels)
+            labels: base_labels.merge(additional_labels)
           }.merge(formatted_annotations).merge(formatted_namespace).compact
         }.compact
       end
