@@ -22,12 +22,12 @@ module Metatron
           kind:,
           metadata: {
             name:,
-            labels: { "#{label_namespace}/name": name }.merge(additional_labels)
+            labels: base_labels.merge(additional_labels)
           }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             replicas:,
             selector: {
-              matchLabels: { "#{label_namespace}/name": name }.merge(additional_pod_labels)
+              matchLabels: base_labels.merge(additional_pod_labels)
             }
           }.merge(pod_template)
         }
