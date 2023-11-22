@@ -23,6 +23,7 @@ task :bump, [:type] do |_t, args|
   new_version = calculate_new_version(type)
   puts "Bumping gem version from #{current_version} to #{new_version}"
   update_version(new_version)
+  update_gem_lock
 end
 
 task default: %i[spec rubocop yard]
@@ -42,6 +43,10 @@ def calculate_new_version(type)
   end
 
   version.join(".")
+end
+
+def update_gem_lock
+  system("bundle lock --update")
 end
 
 def update_version(new_version)
