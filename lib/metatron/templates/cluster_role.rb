@@ -11,7 +11,7 @@ module Metatron
       alias aggregationRule aggregation_rule
 
       def initialize(name)
-        super(name)
+        super
         @api_version = "rbac.authorization.k8s.io/v1"
         @rules = []
       end

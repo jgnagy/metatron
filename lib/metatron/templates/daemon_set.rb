@@ -11,7 +11,7 @@ module Metatron
       attr_accessor :replicas, :additional_labels
 
       def initialize(name)
-        super(name)
+        super
         @api_version = "apps/v1"
       end
 
