@@ -9,7 +9,7 @@ module Metatron
       attr_accessor :additional_labels
 
       def initialize(name)
-        super(name)
+        super
         @additional_labels = {}
       end
 

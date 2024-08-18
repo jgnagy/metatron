@@ -12,7 +12,7 @@ module Metatron
       alias podSelector pod_selector
 
       def initialize(name)
-        super(name)
+        super
         @pod_selector = pod_selector
         @ingress = ingress
         @egress = egress

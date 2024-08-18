@@ -10,7 +10,7 @@ module Metatron
       attr_accessor :rules
 
       def initialize(name)
-        super(name)
+        super
         @api_version = "rbac.authorization.k8s.io/v1"
         @rules = []
       end

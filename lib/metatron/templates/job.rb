@@ -19,7 +19,7 @@ module Metatron
       alias ttlSecondsAfterFinished ttl_seconds_after_finished
 
       def initialize(name)
-        super(name)
+        super
         @api_version = "batch/v1"
       end
 
