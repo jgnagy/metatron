@@ -7,6 +7,26 @@ RSpec.describe Metatron::Templates::Service do
     service
   end
 
+  let(:rendered_service_with_cluster_ip_none) do
+    {
+      apiVersion: "v1",
+      kind: "Service",
+      metadata: {
+        labels: { "metatron.therubyist.org/name": "test" },
+        name: "test"
+      },
+      spec: {
+        publishNotReadyAddresses: false,
+        selector: { "foo.bar/name": "test" },
+        type: "ClusterIP",
+        clusterIP: "None",
+        ports: [
+          { name: "test", port: 3306, protocol: "TCP", targetPort: 3306 }
+        ]
+      }
+    }
+  end
+
   let(:rendered_service) do
     {
       apiVersion: "v1",
@@ -32,5 +52,10 @@ RSpec.describe Metatron::Templates::Service do
 
   it "renders properly" do
     expect(service.render).to eq(rendered_service)
+  end
+
+  it "renders properly with clusterIP: None" do
+    service.cluster_ip = "None"
+    expect(service.render).to eq(rendered_service_with_cluster_ip_none)
   end
 end

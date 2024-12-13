@@ -8,11 +8,13 @@ module Metatron
       include Concerns::Namespaced
 
       attr_accessor :type, :selector, :additional_labels, :ports,
-                    :additional_selector_labels, :publish_not_ready_addresses
+                    :additional_selector_labels, :publish_not_ready_addresses,
+                    :cluster_ip
 
       def initialize(name, port = nil)
         super(name)
         @type = "ClusterIP"
+        @cluster_ip = nil
         @selector = base_labels
         @additional_labels = {}
         @additional_selector_labels = {}
@@ -30,6 +32,7 @@ module Metatron
       end
 
       alias publishNotReadyAddresses publish_not_ready_addresses
+      alias clusterIP cluster_ip
 
       def formatted_ports
         ports&.any? ? { ports: } : {}
@@ -46,8 +49,9 @@ module Metatron
           spec: {
             type:,
             selector: selector.merge(additional_selector_labels),
-            publishNotReadyAddresses:
-          }.merge(formatted_ports)
+            publishNotReadyAddresses:,
+            clusterIP:
+          }.compact.merge(formatted_ports)
         }
       end
     end
