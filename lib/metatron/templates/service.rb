@@ -31,8 +31,10 @@ module Metatron
         ]
       end
 
-      alias publishNotReadyAddresses publish_not_ready_addresses
-      alias clusterIP cluster_ip
+      # rubocop:disable Naming/MethodName
+      def publishNotReadyAddresses = publish_not_ready_addresses
+      def clusterIP = cluster_ip
+      # rubocop:enable Naming/MethodName
 
       def formatted_ports
         ports&.any? ? { ports: } : {}
