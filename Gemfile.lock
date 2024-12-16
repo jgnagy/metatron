@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    metatron (0.8.3)
+    metatron (0.8.4)
       json (~> 2.6)
       rack (>= 2.2.8, < 4)
 
@@ -40,7 +40,7 @@ GEM
     regexp_parser (2.9.3)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.3.9)
+    rexml (3.4.0)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -115,6 +115,7 @@ GEM
 PLATFORMS
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x86_64-linux
 
 DEPENDENCIES
@@ -133,4 +134,4 @@ DEPENDENCIES
   yard (~> 0.9)
 
 BUNDLED WITH
-   2.4.13
+   2.5.22
