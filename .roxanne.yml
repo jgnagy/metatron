@@ -1,14 +1,14 @@
 version: 1.0
 stages:
   build:
-    image: ruby:3.2
+    image: ruby:3.3
     scripts:
     - ./scripts/build.sh
   test:
-    image: ruby:3.2
+    image: ruby:3.3
     scripts:
     - ./scripts/test.sh
   release:
-    image: ruby:3.2
+    image: ruby:3.3
     only:
     - main
