@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "json" unless defined? JSON # allow for JSON to be loaded elsewhere
+
 module Metatron
   # Base class for API services
   class Controller
