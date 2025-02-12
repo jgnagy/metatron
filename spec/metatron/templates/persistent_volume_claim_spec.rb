@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe Metatron::Templates::PersistentVolumeClaim do
-  let(:pvc) { described_class.new("test", storage_class: "test", storage: "1Gi") }
+  let(:pvc) do
+    described_class.new("test", storage_class: "test", storage: "1Gi").tap do |pvc|
+      pvc.data_source = { name: "existing-src-pvc-name", kind: "PersistentVolumeClaim" }
+    end
+  end
 
   let(:rendered_pvc) do
     {
@@ -13,6 +17,10 @@ RSpec.describe Metatron::Templates::PersistentVolumeClaim do
       },
       spec: {
         accessModes: ["ReadWriteOnce"],
+        dataSource: {
+          name: "existing-src-pvc-name",
+          kind: "PersistentVolumeClaim"
+        },
         storageClassName: "test",
         resources: {
           requests: {
