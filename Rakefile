@@ -8,7 +8,7 @@ require "rubocop/rake_task"
 require "yard"
 
 RSpec::Core::RakeTask.new(:spec)
-RuboCop::RakeTask.new(:rubocop)
+# RuboCop::RakeTask.new(:rubocop) (moved to dedicated github action job)
 YARD::Rake::YardocTask.new
 
 desc "allows running a demo controller"
