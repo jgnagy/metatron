@@ -63,19 +63,18 @@ jobs:
     needs: [ lint, yard, test ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Conventional Release Action
-        id: automatic_versioning
-        uses: onesoft-sudo/conventional-release-action@v1.5.0
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        if: ${{ steps.automatic_versioning.outputs.tag != '' }}
+      - uses: GoogleCloudPlatform/release-please-action@v2
+        id: release
         with:
-          tag: ${{ steps.automatic_versioning.outputs.tag }}
-          body: ${{ steps.automatic_versioning.outputs.release_notes }}
+          # The release type
+          release-type: ruby
+          # A name for the artifact releases are being created for
+          # which is the name of our gem
+          package-name: metatron
+          # Should breaking changes before 1.0.0 produce minor bumps?
+          bump-minor-pre-major: true
+          # Path to our version file to increment
+          version-file: "lib/metatron/version.rb"
 
   push:
     name: Push gem to RubyGems.org
