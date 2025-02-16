@@ -68,10 +68,10 @@ jobs:
 
       - name: Conventional Release Action
         id: automatic_versioning
-        uses: onesoft-sudo/conventional-release-action@latest
+        uses: onesoft-sudo/conventional-release-action@v1.5.0
 
       - name: Create Release
-        uses: ncipollo/release-action@v2
+        uses: ncipollo/release-action@v1
         if: ${{ steps.automatic_versioning.outputs.tag != '' }}
         with:
           tag: ${{ steps.automatic_versioning.outputs.tag }}
