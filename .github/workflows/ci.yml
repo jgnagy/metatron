@@ -6,7 +6,8 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   lint:
@@ -63,18 +64,10 @@ jobs:
     needs: [ lint, yard, test ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
-        id: release
+      - uses: googleapis/release-please-action@v4
         with:
           # The release type
           release-type: ruby
-          # A name for the artifact releases are being created for
-          # which is the name of our gem
-          package-name: metatron
-          # Should breaking changes before 1.0.0 produce minor bumps?
-          bump-minor-pre-major: true
-          # Path to our version file to increment
-          version-file: "lib/metatron/version.rb"
 
   push:
     name: Push gem to RubyGems.org
