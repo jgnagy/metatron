@@ -6,7 +6,9 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   lint:
@@ -63,38 +65,23 @@ jobs:
     needs: [ lint, yard, test ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Conventional Release Action
-        id: automatic_versioning
-        uses: onesoft-sudo/conventional-release-action@latest
-
-      - name: Create Release
-        uses: ncipollo/release-action@v2
-        if: ${{ steps.automatic_versioning.outputs.tag != '' }}
+      - uses: googleapis/release-please-action@v4
+        id: release
         with:
-          tag: ${{ steps.automatic_versioning.outputs.tag }}
-          body: ${{ steps.automatic_versioning.outputs.release_notes }}
+          # The release type
+          release-type: ruby
+          # The token to use for authentication
+          token: ${{ secrets.AUTO_RELEASE_TOKEN }}
 
-  push:
-    name: Push gem to RubyGems.org
-    needs: [ release ]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    permissions:
-      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
-      contents: write # IMPORTANT: this permission is required for `rake release` to push the release tag
-
-    steps:
-      # Set up
       - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
+        if: ${{ steps.release.outputs.release_created }}
         with:
           bundler-cache: true
-          ruby-version: ruby
+          ruby-version: .ruby-version
 
       # Release
       - uses: rubygems/release-gem@v1
+        if: ${{ steps.release.outputs.release_created }}
