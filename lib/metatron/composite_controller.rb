@@ -15,14 +15,14 @@ module Metatron
     def finalize = raise NotImplementedError
     def sync = raise NotImplementedError
 
-    private
-
     STRATEGY = {
       "/customize" => { data: :customize, etag: :calculate_customize_etag },
       # finalize calls should be rare and unique enough that we don't need to worry about ETags
       "/finalize" => { data: :finalize },
       "/sync" => { data: :sync, etag: :calculate_sync_etag }
     }.freeze
+
+    private
 
     def _call
       return access_control_allow_methods if request.options?
