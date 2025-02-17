@@ -1,6 +1,8 @@
 require:
-- rubocop-rake
 - rubocop-rspec
+
+plugins:
+- rubocop-rake
 
 Layout/LineLength:
   Max: 100
