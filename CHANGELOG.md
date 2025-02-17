@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.9.0](https://github.com/jgnagy/metatron/compare/v0.8.2...v0.9.0) (2025-02-16)
+## [0.8.8](https://github.com/jgnagy/metatron/compare/v0.8.2...v0.8.8) (2025-02-16)
 
 
 ### Features
