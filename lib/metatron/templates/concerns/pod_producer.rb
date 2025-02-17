@@ -84,6 +84,18 @@ module Metatron
           pod_annotations && !pod_annotations.empty? ? { annotations: pod_annotations } : {}
         end
 
+        def formatted_priority_class_name
+          return {} unless priority_class_name
+
+          if priority_class_name.is_a?(String)
+            { priorityClassName: priority_class_name }
+          elsif priority_class_name.is_a?(PriorityClass)
+            { priorityClassName: priority_class_name.name }
+          else
+            raise "priority_class_name must be a String or a PriorityClass"
+          end
+        end
+
         def formatted_security_context
           security_context && !security_context.empty? ? { securityContext: } : {}
         end
@@ -125,7 +137,6 @@ module Metatron
               hostPID:,
               hostname:,
               nodeName:,
-              priorityClassName:,
               restartPolicy:,
               schedulerName:,
               serviceAccount:,
@@ -141,6 +152,7 @@ module Metatron
               .merge(formatted_init_containers)
               .merge(formatted_image_pull_secrets)
               .merge(formatted_node_selector)
+              .merge(formatted_priority_class_name)
               .compact
           }.compact
         end
