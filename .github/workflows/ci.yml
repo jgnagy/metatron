@@ -68,8 +68,6 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          # The release type
-          release-type: ruby
           # The token to use for authentication
           token: ${{ secrets.AUTO_RELEASE_TOKEN }}
 
