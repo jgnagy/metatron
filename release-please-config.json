@@ -1,4 +1,6 @@
 {
+  "bootstrap-sha": "35ed7bd080d69b5e323fa748735b4a7ea885f224",
+  "last-release-sha": "35ed7bd080d69b5e323fa748735b4a7ea885f224",
   "packages": {
     ".": {
       "package-name": "metatron",
