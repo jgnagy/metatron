@@ -65,6 +65,7 @@ RSpec.describe Metatron::Templates::Pod do
           }
         }
       }
+      pod.priority_class_name = "high-priority"
       pod.security_context = { runAsUser: 1001, runAsGroup: 1001 }
       pod.volumes = [{ name: "tmpvol", emptyDir: {} }]
       pod
@@ -110,6 +111,7 @@ RSpec.describe Metatron::Templates::Pod do
               volumeMounts: [{ mountPath: "/tmp", name: "tmpvol" }]
             }
           ],
+          priorityClassName: "high-priority",
           securityContext: { runAsGroup: 1001, runAsUser: 1001 },
           volumes: [{ emptyDir: {}, name: "tmpvol" }]
         }

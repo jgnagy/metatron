@@ -12,10 +12,10 @@ module Metatron
                           :affinity, :automount_service_account_token, :containers,
                           :dns_policy, :enable_service_links, :hostname, :host_ipc, :host_network,
                           :host_pid, :image_pull_secrets, :init_containers, :node_selector,
-                          :node_name, :persistent_volume_claims, :pod_annotations, :restart_policy,
-                          :scheduler_name, :security_context, :service_account,
-                          :service_account_name, :share_process_namespace, :subdomain,
-                          :termination_grace_period_seconds, :tolerations, :volumes
+                          :node_name, :persistent_volume_claims, :pod_annotations,
+                          :priority_class_name, :restart_policy, :scheduler_name, :security_context,
+                          :service_account, :service_account_name, :share_process_namespace,
+                          :subdomain, :termination_grace_period_seconds, :tolerations, :volumes
 
             initializer :pod_producer_initialize
 
@@ -26,6 +26,7 @@ module Metatron
             alias_method :hostIPC, :host_ipc
             alias_method :hostNetwork, :host_network
             alias_method :hostPID, :host_pid
+            alias_method :priorityClassName, :priority_class_name
             alias_method :nodeSelector, :node_selector
             alias_method :nodeName, :node_name
             alias_method :restartPolicy, :restart_policy
@@ -48,6 +49,7 @@ module Metatron
           @node_selector = {}
           @persistent_volume_claims = []
           @pod_annotations = {}
+          @priority_class_name = nil
           @restart_policy = nil
           @security_context = {}
           @termination_grace_period_seconds = nil
@@ -123,6 +125,7 @@ module Metatron
               hostPID:,
               hostname:,
               nodeName:,
+              priorityClassName:,
               restartPolicy:,
               schedulerName:,
               serviceAccount:,
