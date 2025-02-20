@@ -6,8 +6,8 @@
       "package-name": "metatron",
       "changelog-path": "CHANGELOG.md",
       "release-type": "ruby",
-      "bump-minor-pre-major": false,
-      "bump-patch-for-minor-pre-major": false,
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
       "draft": false,
       "prerelease": false,
       "version-file": "lib/metatron/version.rb"
