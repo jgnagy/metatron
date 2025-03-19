@@ -4,7 +4,8 @@ module Metatron
   # Base class for templating Kubernetes resources
   class Template
     attr_accessor :api_version, :name, :additional_labels
-    attr_reader :kind, :label_namespace
+    attr_reader :kind
+    attr_writer :base_labels
 
     class << self
       attr_writer :label_namespace
@@ -38,7 +39,6 @@ module Metatron
 
     def initialize(name)
       @name = name
-      @label_namespace = self.class.label_namespace
       @api_version = "v1"
       @kind = find_kind
       @additional_labels = {}
@@ -47,9 +47,14 @@ module Metatron
 
     alias apiVersion api_version
 
-    def base_labels = { "#{label_namespace}/name": name }
+    def base_labels
+      @base_labels || { "#{label_namespace}/name": name }
+    end
 
     private
+
+    # defers to the nearest metatron ancestor to determine the label namespace
+    def label_namespace = self.class.label_namespace
 
     def run_initializers
       self.class.nearest_metatron_ancestor.initializers.each { send(_1.to_sym) }
