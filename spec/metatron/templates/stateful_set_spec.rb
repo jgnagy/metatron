@@ -71,7 +71,8 @@ RSpec.describe Metatron::Templates::StatefulSet do
         rollingUpdate: { maxSurge: 2, maxUnavailable: 0 }, type: "RollingUpdate"
       }
       stateful_set.termination_grace_period_seconds = 10
-      stateful_set.additional_pod_labels = { foo: "bar" }
+      stateful_set.additional_pod_labels = { foo: "bar", them: "hills" }
+      stateful_set.additional_pod_match_labels = { foo: "bar" }
       stateful_set.service_name = "a-test"
       stateful_set.persistent_volume_claims = [
         Metatron::Templates::PersistentVolumeClaim.new("test", storage_class: "test",
@@ -96,7 +97,8 @@ RSpec.describe Metatron::Templates::StatefulSet do
           updateStrategy: { rollingUpdate: { maxSurge: 2, maxUnavailable: 0 },
                             type: "RollingUpdate" },
           template: {
-            metadata: { labels: { "metatron.therubyist.org/name": "test", foo: "bar" } },
+            metadata: { labels: { "metatron.therubyist.org/name": "test", foo: "bar",
+                                  them: "hills" } },
             spec: {
               containers: [
                 {
