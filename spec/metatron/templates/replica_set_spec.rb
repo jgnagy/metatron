@@ -74,7 +74,8 @@ RSpec.describe Metatron::Templates::ReplicaSet do
       rs.annotations = { "a.test/foo": "bar" }
       rs.additional_labels = { "app.kubernetes.io/part-of": "test-app" }
       rs.replicas = 10
-      rs.additional_pod_labels = { thing: "swamp" }
+      rs.additional_pod_labels = { them: "hills", thing: "swamp" }
+      rs.additional_pod_match_labels = { thing: "swamp" }
       rs.security_context = { runAsUser: 1000, runAsGroup: 1000 }
       rs.volumes = [{ name: "tmpvol", emptyDir: {} }]
 
@@ -100,7 +101,7 @@ RSpec.describe Metatron::Templates::ReplicaSet do
           },
           template: {
             metadata: {
-              labels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
+              labels: { "metatron.therubyist.org/name": "test", them: "hills", thing: "swamp" }
             },
             spec: {
               containers: [

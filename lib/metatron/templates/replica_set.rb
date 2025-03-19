@@ -27,7 +27,7 @@ module Metatron
           spec: {
             replicas:,
             selector: {
-              matchLabels: base_labels.merge(additional_pod_labels)
+              matchLabels: base_labels.merge(additional_pod_match_labels)
             }
           }.merge(pod_template)
         }

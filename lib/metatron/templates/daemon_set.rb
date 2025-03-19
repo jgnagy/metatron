@@ -25,7 +25,7 @@ module Metatron
           }.merge(formatted_annotations).merge(formatted_namespace),
           spec: {
             selector: {
-              matchLabels: base_labels.merge(additional_pod_labels)
+              matchLabels: base_labels.merge(additional_pod_match_labels)
             }
           }.merge(pod_template)
         }

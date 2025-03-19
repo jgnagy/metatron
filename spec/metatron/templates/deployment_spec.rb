@@ -86,7 +86,8 @@ RSpec.describe Metatron::Templates::Deployment do
       dep.namespace = "test-namespace"
       dep.replicas = 10
       dep.strategy = { type: "RollingUpdate", rollingUpdate: { maxSurge: 1, maxUnavailable: 0 } }
-      dep.additional_pod_labels = { thing: "swamp" }
+      dep.additional_pod_labels = { them: "hills", thing: "swamp" }
+      dep.additional_pod_match_labels = { thing: "swamp" }
       dep.security_context = { runAsUser: 1000, runAsGroup: 1000 }
       dep.volumes = [{ name: "tmpvol", emptyDir: {} }]
 
@@ -114,7 +115,7 @@ RSpec.describe Metatron::Templates::Deployment do
           },
           template: {
             metadata: {
-              labels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
+              labels: { "metatron.therubyist.org/name": "test", them: "hills", thing: "swamp" }
             },
             spec: {
               containers: [

@@ -38,7 +38,7 @@ module Metatron
             serviceName:,
             updateStrategy:,
             selector: {
-              matchLabels: base_labels.merge(additional_pod_labels)
+              matchLabels: base_labels.merge(additional_pod_match_labels)
             }
           }.merge(pod_template).merge(volume_claim_templates).compact
         }

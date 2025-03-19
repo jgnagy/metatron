@@ -9,10 +9,10 @@ module Metatron
           # base.extend ClassMethods
           base.class_eval do
             attr_accessor :active_deadline_seconds, :additional_pod_labels,
-                          :affinity, :automount_service_account_token, :containers,
-                          :dns_policy, :enable_service_links, :hostname, :host_ipc, :host_network,
-                          :host_pid, :image_pull_secrets, :init_containers, :node_selector,
-                          :node_name, :persistent_volume_claims, :pod_annotations,
+                          :additional_pod_match_labels, :affinity, :automount_service_account_token,
+                          :containers, :dns_policy, :enable_service_links, :hostname, :host_ipc,
+                          :host_network, :host_pid, :image_pull_secrets, :init_containers,
+                          :node_selector, :node_name, :persistent_volume_claims, :pod_annotations,
                           :priority_class_name, :restart_policy, :scheduler_name, :security_context,
                           :service_account, :service_account_name, :share_process_namespace,
                           :subdomain, :termination_grace_period_seconds, :tolerations, :volumes
@@ -41,6 +41,7 @@ module Metatron
 
         def pod_producer_initialize
           @additional_pod_labels = {}
+          @additional_pod_match_labels = {}
           @affinity = {}
           @containers = []
           @enable_service_links = nil

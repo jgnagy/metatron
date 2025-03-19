@@ -83,7 +83,8 @@ RSpec.describe Metatron::Templates::DaemonSet do
       ds.annotations = { "a.test/foo": "bar" }
       ds.additional_labels = { "app.kubernetes.io/part-of": "test-app" }
       ds.namespace = "test-namespace"
-      ds.additional_pod_labels = { thing: "swamp" }
+      ds.additional_pod_labels = { them: "hills", thing: "swamp" }
+      ds.additional_pod_match_labels = { thing: "swamp" }
       ds.security_context = { runAsUser: 1000, runAsGroup: 1000 }
       ds.volumes = [{ name: "tmpvol", emptyDir: {} }]
 
@@ -109,7 +110,7 @@ RSpec.describe Metatron::Templates::DaemonSet do
           },
           template: {
             metadata: {
-              labels: { "metatron.therubyist.org/name": "test", thing: "swamp" }
+              labels: { "metatron.therubyist.org/name": "test", them: "hills", thing: "swamp" }
             },
             spec: {
               containers: [
