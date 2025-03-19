@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0](https://github.com/jgnagy/metatron/compare/metatron/v0.9.0...metatron/v0.10.0) (2025-03-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **templates:** pod match labels are distinct
+* **templates:** allow overriding base labels
+
+### Features
+
+* **templates:** allow overriding base labels ([ba3d4c2](https://github.com/jgnagy/metatron/commit/ba3d4c2813518a5b9bb845700656b2ce67321369))
+* **templates:** pod match labels are distinct ([82b59d0](https://github.com/jgnagy/metatron/commit/82b59d0d93cbf1c4423895f20351e2b73d6057e0))
+
 ## [0.9.0](https://github.com/jgnagy/metatron/compare/metatron-v0.8.8...metatron/v0.9.0) (2025-02-17)
 
 
