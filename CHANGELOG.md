@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/jgnagy/metatron/compare/metatron/v0.10.0...metatron/v0.10.1) (2025-03-21)
+
+
+### Features
+
+* **misc:** allow ping controller usage as class ([60048f3](https://github.com/jgnagy/metatron/commit/60048f3905959bf4193254e9e3f3800298cbc494))
+
 ## [0.10.0](https://github.com/jgnagy/metatron/compare/metatron/v0.9.0...metatron/v0.10.0) (2025-03-19)
 
 
