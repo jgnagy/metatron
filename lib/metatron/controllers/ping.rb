@@ -6,6 +6,10 @@ module Metatron
     class Ping
       RESPONSE = { status: "up" }.to_json
 
+      class << self
+        def call(env) = new.call(env)
+      end
+
       def call(env)
         req = Rack::Request.new(env)
 
