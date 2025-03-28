@@ -40,6 +40,10 @@ module Metatron
         ports&.any? ? { ports: } : {}
       end
 
+      def formatted_publish_not_ready_addresses
+        publish_not_ready_addresses ? { publishNotReadyAddresses: } : {}
+      end
+
       def render
         {
           apiVersion:,
@@ -51,9 +55,8 @@ module Metatron
           spec: {
             type:,
             selector: selector.merge(additional_selector_labels),
-            publishNotReadyAddresses:,
             clusterIP:
-          }.compact.merge(formatted_ports)
+          }.compact.merge(formatted_ports).merge(formatted_publish_not_ready_addresses)
         }
       end
     end
