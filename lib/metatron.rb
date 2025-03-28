@@ -6,6 +6,9 @@ require "securerandom"
 require "time"
 require "logger"
 
+# external requirements
+require "base64"
+
 # The top-level module for Metatron
 module Metatron
   class Error < StandardError; end
