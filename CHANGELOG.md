@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0](https://github.com/jgnagy/metatron/compare/metatron/v0.10.1...metatron/v0.11.0) (2025-03-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **templates:** secret now base64 encodes
+* **templates:** omit attribute when default
+
+### Code Refactoring
+
+* **templates:** omit attribute when default ([0add60c](https://github.com/jgnagy/metatron/commit/0add60c5ef9faca5e1c7be050415ef3a1f15227b))
+* **templates:** secret now base64 encodes ([3d263ec](https://github.com/jgnagy/metatron/commit/3d263ec85b9d7e87b987c2fcf4c6fc9664eb84d6))
+
 ## [0.10.1](https://github.com/jgnagy/metatron/compare/metatron/v0.10.0...metatron/v0.10.1) (2025-03-21)
 
 
