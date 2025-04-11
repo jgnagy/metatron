@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/jgnagy/metatron/compare/metatron/v0.11.0...metatron/v0.11.1) (2025-04-11)
+
+
+### Features
+
+* **templates:** add volume snapshot and content ([b969ce6](https://github.com/jgnagy/metatron/commit/b969ce6dc93503eb08c15d72356691acf88f7db9))
+
 ## [0.11.0](https://github.com/jgnagy/metatron/compare/metatron/v0.10.1...metatron/v0.11.0) (2025-03-28)
 
 
