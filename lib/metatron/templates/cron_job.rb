@@ -10,13 +10,16 @@ module Metatron
 
       attr_accessor :schedule, :suspend, :concurrency_policy, :starting_deadline_seconds,
                     :successful_jobs_history_limit, :failed_jobs_history_limit,
-                    :backoff_limit
+                    :job_active_deadline_seconds, :ttl_seconds_after_finished,
+                    :backoff_limit, :time_zone
 
       alias backoffLimit backoff_limit
       alias concurrencyPolicy concurrency_policy
       alias startingDeadlineSeconds starting_deadline_seconds
       alias successfulJobsHistoryLimit successful_jobs_history_limit
       alias failedJobsHistoryLimit failed_jobs_history_limit
+      alias timeZone time_zone
+      alias ttlSecondsAfterFinished ttl_seconds_after_finished
 
       def initialize(name, schedule = "* * * * *")
         super(name)
@@ -40,9 +43,12 @@ module Metatron
             startingDeadlineSeconds:,
             successfulJobsHistoryLimit:,
             failedJobsHistoryLimit:,
+            timeZone:,
             jobTemplate: {
               spec: {
-                backoffLimit:
+                activeDeadlineSeconds: job_active_deadline_seconds,
+                backoffLimit:,
+                ttlSecondsAfterFinished:
               }.merge(pod_template).compact
             }.merge(formatted_tolerations).compact
           }.compact

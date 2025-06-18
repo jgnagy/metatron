@@ -57,6 +57,7 @@ RSpec.describe Metatron::Templates::CronJob do
       }
       cron_job.containers << container
       cron_job.active_deadline_seconds = 10
+      cron_job.job_active_deadline_seconds = 30
       cron_job.annotations = { "a.test/foo": "bar" }
       cron_job.additional_labels[:foo] = "bar"
       cron_job.backoff_limit = 5
@@ -66,6 +67,7 @@ RSpec.describe Metatron::Templates::CronJob do
       cron_job.starting_deadline_seconds = 10
       cron_job.successful_jobs_history_limit = 5
       cron_job.suspend = false
+      cron_job.ttl_seconds_after_finished = 3600
       cron_job
     end
 
@@ -88,7 +90,9 @@ RSpec.describe Metatron::Templates::CronJob do
           suspend: false,
           jobTemplate: {
             spec: {
+              activeDeadlineSeconds: 30,
               backoffLimit: 5,
+              ttlSecondsAfterFinished: 3600,
               template: {
                 metadata: { labels: { "metatron.therubyist.org/name": "hello" } },
                 spec: {
