@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/jgnagy/metatron/compare/metatron/v0.11.1...metatron/v0.11.2) (2025-06-18)
+
+
+### Features
+
+* Add additional features to cron job template ([5585c58](https://github.com/jgnagy/metatron/commit/5585c58148ce45c222a58b50a420979d4ae672cb))
+
 ## [0.11.1](https://github.com/jgnagy/metatron/compare/metatron/v0.11.0...metatron/v0.11.1) (2025-04-11)
 
 
