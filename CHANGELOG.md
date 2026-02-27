@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.3](https://github.com/jgnagy/metatron/compare/metatron/v0.11.2...metatron/v0.11.3) (2026-02-27)
+
+
+### Features
+
+* add Gateway API resource templates (closes [#92](https://github.com/jgnagy/metatron/issues/92)) ([9820f78](https://github.com/jgnagy/metatron/commit/9820f786dfeff6148d6e5c81e46c628d8f5ca697))
+
 ## [0.11.2](https://github.com/jgnagy/metatron/compare/metatron/v0.11.1...metatron/v0.11.2) (2025-06-18)
 
 
