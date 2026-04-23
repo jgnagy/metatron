@@ -2,7 +2,7 @@
 
 Metatron is a Ruby library for creating [Metacontroller](https://metacontroller.github.io/metacontroller/)-based custom Kubernetes controllers.
 
-The intention is to make it as easy as possible to use Ruby to manage [custom resources](https://kubernetes.io/docs/concepts/api-extension/custom-resources/) within your Kubernetes infrastructure. No Golang required! Use simple, Rack-based controllers to provide the logic for your custom resources. Metatron templates provide a most Kubernetes boilerplate code for you, so you can focus on the logic that enables your custom resources to do what you need them to do.
+The intention is to make it as easy as possible to use Ruby to manage [custom resources](https://kubernetes.io/docs/concepts/api-extension/custom-resources/) within your Kubernetes infrastructure. No Golang required! Use simple, Rack-based controllers to provide the logic for your custom resources. Metatron templates provide most Kubernetes boilerplate code for you, so you can focus on the logic that enables your custom resources to do what you need them to do.
 
 For more information, see the [Metatron Wiki on GitHub](https://github.com/jgnagy/metatron/wiki)!
 
