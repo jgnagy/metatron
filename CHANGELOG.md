@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.11.4](https://github.com/jgnagy/metatron/compare/metatron/v0.11.3...metatron/v0.11.4) (2026-07-06)
+
+
+### Features
+
+* add HorizontalPodAutoscaler template ([5999ba9](https://github.com/jgnagy/metatron/commit/5999ba94f02ec4e2861bcef696bed7fa44748b9d))
+* add HorizontalPodAutoscaler template (closes [#31](https://github.com/jgnagy/metatron/issues/31)) ([a828211](https://github.com/jgnagy/metatron/commit/a828211a21b5b1230fefe21472fda5b00c3f0a34))
+
+
+### Bug Fixes
+
+* raise minimum Ruby version to 3.3 (EOL cleanup) ([3c1a94f](https://github.com/jgnagy/metatron/commit/3c1a94f77d5641239d370e9a1e5390077ebe8e90))
+* raise minimum Ruby version to 3.3 (EOL cleanup) ([9b01b86](https://github.com/jgnagy/metatron/commit/9b01b86dbca32e4c412e9ac753907cc7c026731f))
+
 ## [0.11.3](https://github.com/jgnagy/metatron/compare/metatron/v0.11.2...metatron/v0.11.3) (2026-02-27)
 
 
