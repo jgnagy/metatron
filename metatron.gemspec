@@ -41,6 +41,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-rspec",       "~> 2.11"
   spec.add_development_dependency "simplecov",           "~> 0.21"
   spec.add_development_dependency "simplecov-cobertura", "~> 2.1"
-  spec.add_development_dependency "solargraph",          "~> 0.45"
+  spec.add_development_dependency "solargraph",          ">= 0.45", "< 1.0"
   spec.add_development_dependency "yard",                "~> 0.9"
 end

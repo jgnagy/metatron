@@ -140,7 +140,7 @@ DEPENDENCIES
   rubocop-rspec (~> 2.11)
   simplecov (~> 0.21)
   simplecov-cobertura (~> 2.1)
-  solargraph (~> 0.45)
+  solargraph (>= 0.45, < 1.0)
   yard (~> 0.9)
 
 BUNDLED WITH
