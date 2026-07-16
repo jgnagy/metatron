@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.5](https://github.com/jgnagy/metatron/compare/metatron/v0.11.4...metatron/v0.11.5) (2026-07-16)
+
+
+### Features
+
+* add name validation to Template base class (closes [#15](https://github.com/jgnagy/metatron/issues/15)) ([#102](https://github.com/jgnagy/metatron/issues/102)) ([caabdef](https://github.com/jgnagy/metatron/commit/caabdefbe87e92800adfb53a830674e631079b54))
+
 ## [0.11.4](https://github.com/jgnagy/metatron/compare/metatron/v0.11.3...metatron/v0.11.4) (2026-07-06)
 
 
