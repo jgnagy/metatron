@@ -38,6 +38,10 @@ module Metatron
     end
 
     def initialize(name)
+      unless name.is_a?(String) && !name.strip.empty?
+        raise ArgumentError, "name must be a non-empty string"
+      end
+
       @name = name
       @api_version = "v1"
       @kind = find_kind
