@@ -28,8 +28,15 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 3.3"
 
   spec.add_dependency "base64"
-  spec.add_dependency "json", "~> 2.6"
-  spec.add_dependency "rack", ">= 2.2.8", "< 4"
+  # Dependency floors track the patched releases in rubysec/ruby-advisory-db:
+  #   json  >= 2.21.2 (CVE-2026-54696 heap overflow; CVE-2026-71847 UAF hits 2.20.0-2.21.1)
+  #   rack  >= 2.2.25 (CVE-2026-25500, CVE-2026-26961, CVE-2026-34230, CVE-2026-34763,
+  #                     CVE-2026-34785, CVE-2026-34786, CVE-2026-34826, CVE-2026-34829,
+  #                     CVE-2026-34830, CVE-2026-34831, GHSA-5v64-555j-wjxm,
+  #                     GHSA-p8x9-v4hv-2w4g, GHSA-wvg4-6p58-3gh3)
+  # See security assessment finding L-1.
+  spec.add_dependency "json", ">= 2.21.2", "< 3"
+  spec.add_dependency "rack", ">= 2.2.25", "< 4"
 
   spec.add_development_dependency "bundler",             "~> 2.3"
   spec.add_development_dependency "byebug",              "~> 11"
