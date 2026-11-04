@@ -28,8 +28,9 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 3.3"
 
   spec.add_dependency "base64"
-  spec.add_dependency "json", "~> 2.6"
-  spec.add_dependency "rack", ">= 2.2.8", "< 4"
+  # Floors past the last rubysec/ruby-advisory-db patched releases.
+  spec.add_dependency "json", ">= 2.21.2", "< 3"
+  spec.add_dependency "rack", ">= 2.2.25", "< 4"
 
   spec.add_development_dependency "bundler",             "~> 2.3"
   spec.add_development_dependency "byebug",              "~> 11"
