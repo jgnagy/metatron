@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.11.5](https://github.com/jgnagy/metatron/compare/metatron/v0.11.4...metatron/v0.11.5) (2026-11-04)
+
+
+### Features
+
+* add name validation to Template base class (closes [#15](https://github.com/jgnagy/metatron/issues/15)) ([#102](https://github.com/jgnagy/metatron/issues/102)) ([caabdef](https://github.com/jgnagy/metatron/commit/caabdefbe87e92800adfb53a830674e631079b54))
+* **security:** controller-level request body cap (M-1) ([c263e14](https://github.com/jgnagy/metatron/commit/c263e14700ecca7263f82f8a2666df887261b316))
+* **security:** opt-in auth + body-limit middleware, controller exception boundary ([481d44c](https://github.com/jgnagy/metatron/commit/481d44cfc1782ffb7a223d4da12fe7d7ec280d05))
+* **security:** webhook auth, request body cap, exception boundary — best of both ([dd60c8a](https://github.com/jgnagy/metatron/commit/dd60c8a1324b398031fa56b0a160e36012764576))
+
+
+### Bug Fixes
+
+* **deps:** raise gemspec floors past CVE-vulnerable rack/json, add bundler-audit CI ([c9e5ab0](https://github.com/jgnagy/metatron/commit/c9e5ab0c88eba4622c528d29273385f4ef86cf02))
+* **deps:** raise gemspec floors past CVE-vulnerable rack/json, add bundler-audit CI ([5a3ed39](https://github.com/jgnagy/metatron/commit/5a3ed39c6b8a94e768c447d7cf2849e5b0df2e53))
+
 ## [0.11.4](https://github.com/jgnagy/metatron/compare/metatron/v0.11.3...metatron/v0.11.4) (2026-07-06)
 
 
