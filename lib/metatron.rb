@@ -20,6 +20,9 @@ end
 
 # Internal requirements
 require "metatron/version"
+require "metatron/problem"
+require "metatron/middleware/auth"
+require "metatron/middleware/body_limit"
 require "metatron/template"
 require "metatron/templates/concerns/annotated"
 require "metatron/templates/concerns/namespaced"
