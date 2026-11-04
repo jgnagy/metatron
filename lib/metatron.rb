@@ -11,15 +11,24 @@ require "base64"
 
 # The top-level module for Metatron
 module Metatron
+  # Default request body limit (1 MiB). Override via
+  # METATRON_MAX_REQUEST_BODY_BYTES or Metatron.max_body_bytes=.
+  DEFAULT_MAX_BYTES = 1_048_576
+
   class Error < StandardError; end
+  class PayloadTooLarge < Error; end
   class ConfigError < Error; end
 
-  singleton_class.attr_accessor :logger
+  singleton_class.attr_accessor :max_body_bytes, :logger
+  self.max_body_bytes = ENV.fetch("METATRON_MAX_REQUEST_BODY_BYTES", DEFAULT_MAX_BYTES).to_i
   self.logger = Logger.new($stdout, level: ENV.fetch("LOG_LEVEL", :warn))
 end
 
 # Internal requirements
 require "metatron/version"
+require "metatron/problem"
+require "metatron/middleware/auth"
+require "metatron/middleware/body_limit"
 require "metatron/template"
 require "metatron/templates/concerns/annotated"
 require "metatron/templates/concerns/namespaced"
