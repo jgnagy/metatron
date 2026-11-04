@@ -100,4 +100,29 @@ RSpec.describe Metatron::Controller do
       expect(JSON.parse(last_response.body)["error"]).to include("Request must be JSON")
     end
   end
+
+  describe "controller-level body cap (zero-config M-1 fix)" do
+    let(:app) { NilParamsTestController }
+
+    before do
+      Metatron.max_body_bytes = 10
+    end
+
+    after do
+      limit = ENV.fetch("METATRON_MAX_REQUEST_BODY_BYTES", Metatron::DEFAULT_MAX_BYTES)
+      Metatron.max_body_bytes = limit.to_i
+    end
+
+    it "rejects a body exceeding the cap with 413" do
+      header "Content-Type", "application/json"
+      post "/", "{\"data\": \"#{"x" * 100}\""
+      expect(last_response.status).to eq(413)
+    end
+
+    it "allows a body within the cap" do
+      header "Content-Type", "application/json"
+      post "/sync", '{"a":1}'
+      expect(last_response.status).to eq(200)
+    end
+  end
 end
