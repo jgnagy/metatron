@@ -169,7 +169,7 @@ RSpec.describe Metatron::CompositeController do
       expect(last_response.headers["etag"]).to eq("\"abcd1234\"")
     end
 
-    it "returns a 412 for standard sync requests with ETag headers" do
+    it "returns a 304 for standard sync requests with ETag headers" do
       post(
         "/sync",
         {},
@@ -179,7 +179,7 @@ RSpec.describe Metatron::CompositeController do
           "CONTENT_TYPE" => "application/json"
         }
       )
-      expect(last_response.status).to eq(412)
+      expect(last_response.status).to eq(304)
     end
 
     it "does not provide a body for standard sync requests with ETag headers" do
@@ -231,7 +231,7 @@ RSpec.describe Metatron::CompositeController do
       expect(last_response.headers["etag"]).to eq("\"efgh5678\"")
     end
 
-    it "returns a 412 for standard customize requests with ETag headers" do
+    it "returns a 304 for standard customize requests with ETag headers" do
       post(
         "/customize",
         {},
@@ -241,7 +241,7 @@ RSpec.describe Metatron::CompositeController do
           "CONTENT_TYPE" => "application/json"
         }
       )
-      expect(last_response.status).to eq(412)
+      expect(last_response.status).to eq(304)
     end
 
     it "does not provide a body for standard customize requests with ETag headers" do

@@ -32,7 +32,10 @@ module Metatron
 
       headers = {}
 
-      return Rack::Response[412, headers, []].to_a if etag_matches?(headers)
+      # Metacontroller only accepts 304 Not Modified when it sends
+      # If-None-Match; a 412 is treated as a hook failure. See
+      # https://github.com/metacontroller/metacontroller/blob/master/pkg/hooks/webhook_etag.go
+      return Rack::Response[304, headers, []].to_a if etag_matches?(headers)
 
       Rack::Response[200, headers, processed_data].to_a
     end

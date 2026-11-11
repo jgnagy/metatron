@@ -33,6 +33,14 @@ Errors raised inside `sync`, `customize`, or `finalize` are caught and returned
 as generic JSON `500` problem documents, with the details written to
 `Metatron.logger`. Do not add `Rack::ShowExceptions` to a production stack.
 
+## ETags
+
+If a controller implements `calculate_sync_etag` or
+`calculate_customize_etag`, enable ETag handling on the Metacontroller webhook
+(`etag.enabled: true`). Metatron answers a matching `If-None-Match` request
+with `304 Not Modified`, which Metacontroller uses to replay its cached
+response instead of re-rendering unchanged children.
+
 ## Development
 
 Unit tests run without any cluster dependencies:
