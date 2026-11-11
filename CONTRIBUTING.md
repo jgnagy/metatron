@@ -39,8 +39,10 @@ script/integration --k3d-version v5.9.0
 ```
 
 Set `METACONTROLLER_VERSION` to test another Metacontroller release and
-`K3D_VERSION` to assert the expected k3d binary is installed. CI runs a matrix
-across both dimensions so compatibility regressions surface before release.
+`K3D_VERSION` to assert the expected k3d binary is installed. CI currently pins
+the latest k3d and Metacontroller releases, using a matrix that is ready for
+additional versions. The integration job runs only after the faster lint,
+test, security, and docs jobs succeed.
 If a local Metacontroller clone exists at
 `$HOME/Development/golang/metacontroller` with the requested tag, its manifests
 are used instead of downloading them; otherwise the pinned release manifests

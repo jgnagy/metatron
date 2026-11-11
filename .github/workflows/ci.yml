@@ -2,6 +2,13 @@ name: CI
 
 on:
   pull_request:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -70,3 +77,43 @@ jobs:
 
       - name: Audit dependencies for known vulnerabilities
         run: bundle exec bundler-audit check
+
+  integration:
+    name: integration (k3d ${{ matrix.k3d }}, Metacontroller ${{ matrix.metacontroller }})
+    # Keep cluster-backed work behind the fast, cheap jobs.
+    needs: [lint, yard, test, security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        k3d: ["v5.9.0"]
+        metacontroller: ["v4.17.6"]
+    env:
+      K3D_VERSION: ${{ matrix.k3d }}
+      METACONTROLLER_VERSION: ${{ matrix.metacontroller }}
+      K3D_CLUSTER_NAME: metatron-it-${{ github.run_id }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Install k3d
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh \
+            | TAG="$K3D_VERSION" bash
+
+      - name: Verify container tooling
+        run: |
+          docker version
+          k3d version
+          kubectl version --client
+
+      - name: Run integration tests
+        run: script/integration
