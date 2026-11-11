@@ -5,4 +5,4 @@ source "https://rubygems.org"
 # Exercise the gem from this checkout, not a published release.
 gem "metatron", path: "../.."
 
-gem "puma", "~> 6.4"
+gem "puma", "~> 7.2"
