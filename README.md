@@ -33,6 +33,25 @@ Errors raised inside `sync`, `customize`, or `finalize` are caught and returned
 as generic JSON `500` problem documents, with the details written to
 `Metatron.logger`. Do not add `Rack::ShowExceptions` to a production stack.
 
+## Development
+
+Unit tests run without any cluster dependencies:
+
+```sh
+bundle exec rake spec
+```
+
+The cluster-backed integration suite runs Metatron against a real
+Metacontroller installation in a throwaway [k3d](https://k3d.io/) cluster. It
+requires Docker, `k3d`, and `kubectl`:
+
+```sh
+bundle exec rake integration
+```
+
+See the [Contributing Guide](CONTRIBUTING.md#integration-testing) for version
+overrides and debugging options.
+
 ## Contributing
 
 If you're interested in contributing to Metatron, please see the [Contributing Guide](CONTRIBUTING.md) in the repository! Be sure to check out the [Code of Conduct](CODE_OF_CONDUCT.md) as well!

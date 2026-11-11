@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+#
+# Run Metatron's integration suite against a real Metacontroller installation
+# in a throwaway k3d cluster.
+#
+# Usage:
+#   script/integration            # create cluster, run specs, delete cluster
+#   script/integration --keep     # leave the cluster running for debugging
+#   script/integration --metacontroller-version v4.17.6
+#   script/integration --k3d-version v5.9.0
+#
+# Environment:
+#   K3D_CLUSTER_NAME            cluster name (default: metatron-integration)
+#   K3D_VERSION                 expected k3d version, verified when set
+#   METATRON_IT_NAMESPACE       namespace for the fixture controller
+#   METATRON_IT_IMAGE           fixture image tag (default: metatron-integration:test)
+#   METATRON_IT_AUTH_TOKEN      bearer token shared with Metacontroller
+#   METACONTROLLER_VERSION      release tag to install (default: v4.17.6)
+#   METACONTROLLER_REPO         local Metacontroller clone; used when the tag exists
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+CLUSTER="${K3D_CLUSTER_NAME:-metatron-integration}"
+K3D_VERSION="${K3D_VERSION:-}"
+NAMESPACE="${METATRON_IT_NAMESPACE:-metatron-integration}"
+IMAGE="${METATRON_IT_IMAGE:-metatron-integration:test}"
+AUTH_TOKEN="${METATRON_IT_AUTH_TOKEN:-integration-secret-token}"
+METACONTROLLER_VERSION="${METACONTROLLER_VERSION:-v4.17.6}"
+METACONTROLLER_REPO="${METACONTROLLER_REPO:-$HOME/Development/golang/metacontroller}"
+KEEP=0
+
+usage() {
+  sed -n '2,/^set -euo pipefail$/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --keep)
+      KEEP=1
+      shift
+      ;;
+    --metacontroller-version)
+      METACONTROLLER_VERSION="${2:?missing version}"
+      shift 2
+      ;;
+    --k3d-version)
+      K3D_VERSION="${2:?missing version}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "unknown argument: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+for command in docker k3d kubectl; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    echo "error: $command is required but not installed" >&2
+    exit 1
+  fi
+done
+
+if ! docker info >/dev/null 2>&1; then
+  echo "error: the Docker daemon is not reachable" >&2
+  exit 1
+fi
+
+if [[ -n "$K3D_VERSION" ]]; then
+  installed_k3d="$(k3d version | awk '/^k3d version/ {print $3; exit}')"
+  if [[ "$installed_k3d" != "$K3D_VERSION" ]]; then
+    echo "error: requested k3d $K3D_VERSION but $installed_k3d is installed" >&2
+    exit 1
+  fi
+fi
+
+KUBECONFIG_FILE=""
+cleanup() {
+  status=$?
+  if [[ "$KEEP" -eq 0 ]]; then
+    k3d cluster delete "$CLUSTER" >/dev/null 2>&1 || true
+  else
+    echo
+    echo "Cluster '$CLUSTER' left running."
+    echo "  export KUBECONFIG=$KUBECONFIG_FILE"
+    echo "  kubectl -n $NAMESPACE get widgets,deployments,services,configmaps,secrets"
+  fi
+  if [[ "$KEEP" -eq 0 && -n "$KUBECONFIG_FILE" ]]; then
+    rm -f "$KUBECONFIG_FILE"
+  fi
+  exit "$status"
+}
+trap cleanup EXIT INT TERM
+
+dump_debug() {
+  echo "=== cluster state ===" >&2
+  kubectl get pods -A >&2 || true
+  echo "=== fixture controller logs ===" >&2
+  kubectl -n "$NAMESPACE" logs -l app=widget-controller --tail=200 >&2 || true
+}
+trap dump_debug ERR
+
+render_manifest() {
+  sed -e "s|__NAMESPACE__|$NAMESPACE|g" \
+      -e "s|__IMAGE__|$IMAGE|g" \
+      -e "s|__AUTH_TOKEN__|$AUTH_TOKEN|g" \
+      "$1"
+}
+
+apply_metacontroller_manifest() {
+  local file="$1"
+  if [[ -n "$LOCAL_MANIFESTS" ]]; then
+    git -C "$METACONTROLLER_REPO" show "$METACONTROLLER_VERSION:manifests/production/$file" | kubectl apply -f -
+  else
+    kubectl apply -f "$REMOTE_MANIFESTS/$file"
+  fi
+}
+
+# Prefer the local Metacontroller clone when it has the requested tag, so
+# local runs do not depend on GitHub. CI falls back to the pinned release URL.
+LOCAL_MANIFESTS=""
+REMOTE_MANIFESTS=""
+if [[ -d "$METACONTROLLER_REPO/.git" ]] && \
+   git -C "$METACONTROLLER_REPO" rev-parse -q --verify "refs/tags/$METACONTROLLER_VERSION" >/dev/null; then
+  LOCAL_MANIFESTS=1
+  echo "Using Metacontroller $METACONTROLLER_VERSION manifests from $METACONTROLLER_REPO"
+else
+  REMOTE_MANIFESTS="https://raw.githubusercontent.com/metacontroller/metacontroller/${METACONTROLLER_VERSION}/manifests/production"
+  echo "Using Metacontroller $METACONTROLLER_VERSION manifests from $REMOTE_MANIFESTS"
+fi
+
+echo "Creating k3d cluster '$CLUSTER'"
+k3d cluster delete "$CLUSTER" >/dev/null 2>&1 || true
+k3d cluster create "$CLUSTER" \
+  --agents 1 \
+  --wait \
+  --timeout 180s \
+  --kubeconfig-update-default=false \
+  --kubeconfig-switch-context=false
+
+KUBECONFIG_FILE="$(mktemp)"
+k3d kubeconfig write "$CLUSTER" --output "$KUBECONFIG_FILE" >/dev/null
+export KUBECONFIG="$KUBECONFIG_FILE"
+
+echo "Building fixture controller image '$IMAGE'"
+docker build --file "$ROOT/integration/Dockerfile" --tag "$IMAGE" "$ROOT"
+
+echo "Importing '$IMAGE' into '$CLUSTER'"
+k3d image import "$IMAGE" --cluster "$CLUSTER"
+
+echo "Installing Metacontroller $METACONTROLLER_VERSION"
+apply_metacontroller_manifest metacontroller-namespace.yaml
+apply_metacontroller_manifest metacontroller-crds-v1.yaml
+apply_metacontroller_manifest metacontroller-rbac.yaml
+apply_metacontroller_manifest metacontroller.yaml
+
+kubectl wait --for=condition=Established --timeout=120s \
+  crd/compositecontrollers.metacontroller.k8s.io
+kubectl -n metacontroller rollout status statefulset/metacontroller --timeout=180s
+
+echo "Deploying fixture controller in namespace '$NAMESPACE'"
+render_manifest "$ROOT/integration/manifests/namespace.yaml" | kubectl apply -f -
+render_manifest "$ROOT/integration/manifests/crd.yaml" | kubectl apply -f -
+kubectl wait --for=condition=Established --timeout=120s \
+  crd/widgets.metatron.therubyist.org
+render_manifest "$ROOT/integration/manifests/controller.yaml" | kubectl apply -f -
+kubectl -n "$NAMESPACE" rollout status deployment/widget-controller --timeout=180s
+render_manifest "$ROOT/integration/manifests/composite-controller.yaml" | kubectl apply -f -
+
+export RUN_INTEGRATION=1
+export METATRON_IT_NAMESPACE="$NAMESPACE"
+export METATRON_IT_RUN_ID="${METATRON_IT_RUN_ID:-$(date +%s)-$$}"
+export METATRON_IT_AUTH_TOKEN="$AUTH_TOKEN"
+
+cd "$ROOT"
+bundle exec rspec spec/integration --format documentation

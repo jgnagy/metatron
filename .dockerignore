@@ -1,0 +1,9 @@
+.git
+.github
+.bundle
+.yardoc
+coverage
+doc
+pkg
+spec
+tmp

@@ -16,7 +16,36 @@ Before you begin, ensure that your contribution is associated with a [GitHub iss
 
 Please make sure that your code passes the existing tests and add tests for any new functionality. Please write [RSpec](https://rspec.info/) examples for new features you add or modify.
 
-To execute the tests, run `bundle exec rake spec`.
+To execute the unit tests, run `bundle exec rake spec`.
+
+#### Integration Testing
+
+Metatron also has a cluster-backed suite that runs a fixture controller against a
+real [Metacontroller](https://metacontroller.github.io/metacontroller/)
+installation. It requires Docker, [`k3d`](https://k3d.io/), and `kubectl`.
+
+```sh
+bundle exec rake integration
+```
+
+The task builds the fixture image, creates a throwaway k3d cluster, installs a
+pinned Metacontroller release, runs `spec/integration`, and deletes the cluster.
+Useful options:
+
+```sh
+script/integration --keep                          # leave the cluster running
+script/integration --metacontroller-version v4.17.5
+script/integration --k3d-version v5.9.0
+```
+
+Set `METACONTROLLER_VERSION` to test another Metacontroller release and
+`K3D_VERSION` to assert the expected k3d binary is installed. CI runs a matrix
+across both dimensions so compatibility regressions surface before release.
+If a local Metacontroller clone exists at
+`$HOME/Development/golang/metacontroller` with the requested tag, its manifests
+are used instead of downloading them; otherwise the pinned release manifests
+are fetched from GitHub. The normal `rake spec` task skips these examples
+unless `RUN_INTEGRATION=1` is set.
 
 ### Coding Style
 

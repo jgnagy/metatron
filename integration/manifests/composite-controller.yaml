@@ -1,0 +1,62 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: widget-controller
+spec:
+  generateSelector: true
+  # Resync often enough that the integration suite can observe the ETag
+  # short-circuit (304) without waiting for a long default interval.
+  resyncPeriodSeconds: 5
+  parentResource:
+    apiVersion: metatron.therubyist.org/v1
+    resource: widgets
+  childResources:
+    - apiVersion: apps/v1
+      resource: deployments
+      updateStrategy:
+        method: InPlace
+    - apiVersion: v1
+      resource: services
+      updateStrategy:
+        method: InPlace
+    - apiVersion: v1
+      resource: configmaps
+      updateStrategy:
+        method: InPlace
+    - apiVersion: v1
+      resource: secrets
+      updateStrategy:
+        method: InPlace
+  hooks:
+    sync:
+      webhook:
+        service:
+          name: widget-controller
+          namespace: __NAMESPACE__
+          port: 9292
+          protocol: http
+        path: /widgets/sync
+        etag:
+          enabled: true
+          cacheTimeoutSeconds: 300
+          cacheCleanupSeconds: 60
+        authorization:
+          type: Bearer
+          secretRef:
+            name: widget-controller-auth
+            namespace: __NAMESPACE__
+            key: token
+    finalize:
+      webhook:
+        service:
+          name: widget-controller
+          namespace: __NAMESPACE__
+          port: 9292
+          protocol: http
+        path: /widgets/finalize
+        authorization:
+          type: Bearer
+          secretRef:
+            name: widget-controller-auth
+            namespace: __NAMESPACE__
+            key: token

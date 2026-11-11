@@ -16,4 +16,9 @@ task :demo do
   system("rackup --host 0.0.0.0 -P #{File.expand_path(".")}/tmp/daemon.pid")
 end
 
+desc "run integration specs against a real Metacontroller in a k3d cluster"
+task :integration do
+  sh File.expand_path("script/integration", __dir__)
+end
+
 task default: %i[spec rubocop yard]

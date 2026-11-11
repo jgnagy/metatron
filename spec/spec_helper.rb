@@ -23,4 +23,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # Integration specs need a live k3d cluster and are run by `script/integration`.
+  config.filter_run_excluding :integration unless ENV["RUN_INTEGRATION"] == "1"
 end
