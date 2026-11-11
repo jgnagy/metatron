@@ -1,9 +1,10 @@
 PATH
   remote: ../..
   specs:
-    metatron (0.11.4)
+    metatron (0.11.5)
       base64
       json (>= 2.21.2, < 3)
+      logger
       rack (>= 2.2.25, < 4)
 
 GEM
@@ -11,6 +12,7 @@ GEM
   specs:
     base64 (0.3.0)
     json (2.21.2)
+    logger (1.7.0)
     nio4r (2.7.5)
     puma (6.6.1)
       nio4r (~> 2.0)
@@ -27,4 +29,4 @@ DEPENDENCIES
   puma (~> 6.4)
 
 BUNDLED WITH
-   2.5.22
+  4.0.23

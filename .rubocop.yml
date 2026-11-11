@@ -14,7 +14,7 @@ AllCops:
   # Cluster-backed fixture app and specs; style is not what they are testing.
   - 'integration/**/*'
   - 'spec/integration/**/*'
-  TargetRubyVersion: 3.3
+  TargetRubyVersion: 3.4
   NewCops: enable
 
 Metrics/AbcSize:
