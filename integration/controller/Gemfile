@@ -5,4 +5,5 @@ source "https://rubygems.org"
 # Exercise the gem from this checkout, not a published release.
 gem "metatron", path: "../.."
 
-gem "puma", "~> 6.4"
+# 8.0.2 is the first 8.x release patched for CVE-2026-47736 (GHSA-qpgp-93vx-g8v8).
+gem "puma", "~> 8.0.2"
