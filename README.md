@@ -6,6 +6,9 @@ The intention is to make it as easy as possible to use Ruby to manage [custom re
 
 For more information, see the [Metatron Wiki on GitHub](https://github.com/jgnagy/metatron/wiki)!
 
+Metatron requires Ruby 3.4 or newer. Development and releases target the
+version pinned in `.ruby-version`.
+
 For help on how to get started, take a look at the [User Guide](https://github.com/jgnagy/metatron/wiki/User-Guide) in the Wiki!
 
 ## Security
