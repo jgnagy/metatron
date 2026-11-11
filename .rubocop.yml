@@ -11,6 +11,9 @@ AllCops:
   Exclude:
   - 'db/schema.rb'
   - 'vendor/**/*'
+  # Cluster-backed fixture app and specs; style is not what they are testing.
+  - 'integration/**/*'
+  - 'spec/integration/**/*'
   TargetRubyVersion: 3.3
   NewCops: enable
 
