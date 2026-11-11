@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.0](https://github.com/jgnagy/metatron/compare/metatron/v0.11.5...metatron/v0.12.0) (2026-11-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Metatron now requires Ruby 3.4 or newer.
+
+### Features
+
+* require Ruby 3.4+ and target Ruby 4.0.9 ([e0d94be](https://github.com/jgnagy/metatron/commit/e0d94bebd307f2dcfa54b85042c067a241652692))
+
 ## [0.11.5](https://github.com/jgnagy/metatron/compare/metatron/v0.11.4...metatron/v0.11.5) (2026-11-11)
 
 
